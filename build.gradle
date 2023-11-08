@@ -23,9 +23,7 @@ repositories {
     maven { url = "https://maven.jamieswhiteshirt.com/libs-release" }
     maven { url = "https://maven.tterrag.com/" } // Flywheel
     maven { url = "https://jitpack.io/" }
-    flatDir {
-        dirs 'libs'
-    }
+    maven { url = "https://repo.ajcool.space/snapshots" }
 }
 
 dependencies {
@@ -34,7 +32,7 @@ dependencies {
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     //modImplementation("curse.maven:worldedit-225608:3922622")
-    modImplementation("name:FastAsyncWorldEdit-Fabric-2.6.0-SNAPSHOT")
+    modImplementation "com.fastasyncworldedit:FastAsyncWorldEdit-Fabric:2.6.0-SNAPSHOT"
     // Fabric API. This is technically optional, but you probably want it anyway.
     modImplementation("com.simibubi.create:create-fabric-${minecraft_version}:${create_version}")
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
