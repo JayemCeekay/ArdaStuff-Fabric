@@ -1,11 +1,21 @@
 package com.ardacraft.ardastuff;
 
+import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.StringReader;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.sk89q.worldedit.fabric.FabricWorldEdit;
 import net.minecraft.block.BlockState;
 import net.minecraft.command.CommandRegistryAccess;
+import net.minecraft.command.argument.ArgumentTypes;
+import net.minecraft.entity.effect.StatusEffect;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.PotionUtil;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -17,8 +27,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.registry.Registry;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class ArdaStuffCommandHandler {
 
@@ -76,6 +85,48 @@ public class ArdaStuffCommandHandler {
                             return 1;
                         })
         );
+
+        dispatcher.register(CommandManager.literal("sauronsays")
+                .requires(source -> source.hasPermissionLevel(2))
+                .then(CommandManager.argument("message", StringArgumentType.greedyString()).executes(
+                        context -> {
+                            var text = Text.empty()
+                                    .append(Text.literal("[SAURON] ").formatted(Formatting.DARK_RED))
+                                    .append(Text.literal(StringArgumentType.getString(context, "message")).formatted(Formatting.RED));
+
+                            context.getSource().getServer().getPlayerManager().broadcast(text, false);
+
+                            return Command.SINGLE_SUCCESS;
+                        }
+                )));
+
+        //register nightvision
+        dispatcher.register(CommandManager.literal("nightvision").executes(context -> ArdaStuffCommandHandler.processNightvision(context.getSource())));
+        dispatcher.register(CommandManager.literal("nv").executes(context -> ArdaStuffCommandHandler.processNightvision(context.getSource())));
     }
 
+    private static int processNightvision(ServerCommandSource source)
+    {
+        if (!source.isExecutedByPlayer()) return 0;
+
+        var player = source.getPlayer();
+        if (player == null) return 0;
+
+        var enabled = Text.empty()
+                .append(Text.literal("ArdaStuff: ").formatted(Formatting.DARK_AQUA))
+                .append(Text.literal("Night Vision Enabled").formatted(Formatting.GREEN));
+
+        var disabled = Text.empty()
+                .append(Text.literal("ArdaStuff: ").formatted(Formatting.DARK_AQUA))
+                .append(Text.literal("Night Vision Disabled").formatted(Formatting.RED));
+
+        var statusEffect = player.getStatusEffect(StatusEffects.NIGHT_VISION);
+
+        if (statusEffect == null) player.addStatusEffect(new StatusEffectInstance(StatusEffects.NIGHT_VISION, Integer.MAX_VALUE, 999));
+        else player.removeStatusEffect(StatusEffects.NIGHT_VISION);
+
+        source.sendFeedback(statusEffect == null ? enabled : disabled, false);
+
+        return Command.SINGLE_SUCCESS;
+    }
 }
