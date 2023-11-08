@@ -11,9 +11,14 @@ import net.fabricmc.fabric.api.event.player.*;
 import net.fabricmc.loader.impl.util.log.Log;
 import net.fabricmc.loader.impl.util.log.LogCategory;
 import net.luckperms.api.LuckPermsProvider;
+import net.luckperms.api.node.Node;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Style;
+import net.minecraft.text.Text;
+import net.minecraft.text.TextColor;
+import net.minecraft.text.Texts;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
@@ -231,7 +236,6 @@ public class ArdaStuff implements ModInitializer {
         });
 
         ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> {
-            /*
             if (entity instanceof ServerPlayerEntity player) {
                 try {
                     if (!LuckPermsProvider.get().getPlayerAdapter(ServerPlayerEntity.class).getUser(player).getCachedData().getPermissionData().checkPermission("metatweaks.hasJoined").asBoolean()) {
@@ -273,7 +277,7 @@ public class ArdaStuff implements ModInitializer {
                 } catch (IllegalStateException e) {
                     e.printStackTrace();
                 }
-            }*/
+            }
         });
     }
 

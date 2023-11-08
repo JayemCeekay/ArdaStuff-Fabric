@@ -8,6 +8,7 @@
     "ChickenMixin",
     "CreateFilteringBehaviourMixin",
     "CropGrowthMixin",
+    "EggEntityMixin",
     "EndCrystalMixin",
     "FallingBlockMixin",
     "FarmlandBlockMixin",
