@@ -1,0 +1,27 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.ardacraft.ardastuff.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "AbstractBlockMixin",
+    "ChickenMixin",
+    "CreateFilteringBehaviourMixin",
+    "CropGrowthMixin",
+    "EndCrystalMixin",
+    "FallingBlockMixin",
+    "FarmlandBlockMixin",
+    "GrassSpreadMixin",
+    "LeavesBlockMixin",
+    "RespawnAnchorMixin",
+    "SaplingGrowthMixin",
+    "SpreadableBlockMixin",
+    "TNTMinecartMixin",
+    "WaterFreezeMixin"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

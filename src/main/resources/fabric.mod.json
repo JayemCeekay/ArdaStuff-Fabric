@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "ardastuff",
+  "version": "${version}",
+  "name": "ArdaStuff",
+  "description": "Tweaks and utilities for ArdaCraft",
+  "authors": [
+    "JayemCeekay"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/ardastuff/icon.png",
+  "environment": "server",
+  "entrypoints": {
+    "main": [
+      "com.ardacraft.ardastuff.ArdaStuff"
+    ]
+  },
+  "mixins": [
+    "ardastuff.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.14.17",
+    "fabric": "*",
+    "minecraft": "1.19.2"
+  }
+}
