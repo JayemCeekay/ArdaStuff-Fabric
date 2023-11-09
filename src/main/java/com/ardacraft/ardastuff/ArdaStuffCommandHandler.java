@@ -122,7 +122,7 @@ public class ArdaStuffCommandHandler {
 
         var statusEffect = player.getStatusEffect(StatusEffects.NIGHT_VISION);
 
-        if (statusEffect == null) player.addStatusEffect(new StatusEffectInstance(StatusEffects.NIGHT_VISION, Integer.MAX_VALUE, 999));
+        if (statusEffect == null) player.addStatusEffect(new StatusEffectInstance(StatusEffects.NIGHT_VISION, Integer.MAX_VALUE, 255, false, false));
         else player.removeStatusEffect(StatusEffects.NIGHT_VISION);
 
         source.sendFeedback(statusEffect == null ? enabled : disabled, false);
