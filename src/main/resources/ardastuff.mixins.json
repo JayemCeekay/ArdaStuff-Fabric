@@ -12,6 +12,7 @@
     "EndCrystalMixin",
     "FallingBlockMixin",
     "FarmlandBlockMixin",
+    "FluidSpreadMixin",
     "GrassSpreadMixin",
     "LeavesBlockMixin",
     "RespawnAnchorMixin",

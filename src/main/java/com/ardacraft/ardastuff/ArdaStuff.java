@@ -1,9 +1,7 @@
 package com.ardacraft.ardastuff;
 
-import com.sk89q.worldedit.IncompleteRegionException;
-import com.sk89q.worldedit.LocalSession;
-import com.sk89q.worldedit.WorldEdit;
-import com.sk89q.worldedit.fabric.FabricAdapter;
+import net.coolsimulations.PocketDimensionPlots.PocketDimensionPlots;
+import net.coolsimulations.PocketDimensionPlots.PocketDimensionPlotsUtils;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
@@ -49,7 +47,7 @@ public class ArdaStuff implements ModInitializer {
         waterSpreaders = new HashSet<>();
         paintingBreakers = new ArrayList<>();
         playerTimeMap = new HashMap<>();
-
+/*
         Stimuli.global().listen(FluidFlowEvent.EVENT, (world, fluidPos, fluidBlock, flowDirection, flowTo, flowToBlock) -> {
             for (ServerPlayerEntity player : ArdaStuff.waterSpreaders) {
                 LocalSession session = WorldEdit.getInstance().getSessionManager().findByName(player.getGameProfile().getName());
@@ -64,7 +62,7 @@ public class ArdaStuff implements ModInitializer {
             return ActionResult.FAIL;
         });
 
-
+*/
         Stimuli.global().listen(ProjectileHitEvent.ENTITY, (projectileEntity, hitResult) -> {
            if(eventBypass) {
                if(hitResult.getEntity().getType().getLootTableId().equals(new Identifier("minecraft:entities/painting"))) {
@@ -212,14 +210,20 @@ public class ArdaStuff implements ModInitializer {
         });
 
         AttackEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
-            if (Registry.ENTITY_TYPE.getId(entity.getType()).getPath().equals("painting")) {
+            //if (Registry.ENTITY_TYPE.getId(entity.getType()).getPath().equalsIgnoreCase("painting") || Registry.ENTITY_TYPE.getId(entity.getType()).getPath().equalsIgnoreCase("item_frame")) {
                 if (player instanceof ServerPlayerEntity serverPlayer) {
-                    if (!paintingBreakers.contains(serverPlayer)) {
-                        return ActionResult.FAIL;
-                    }
-                }
+                        if(LuckPermsProvider.get().getPlayerAdapter(ServerPlayerEntity.class).getUser(serverPlayer).getCachedData().getPermissionData().checkPermission("metatweaks.guestPaintingBreaking").asBoolean()) {
+                            if(PocketDimensionPlotsUtils.getPlotFromCoordinates(serverPlayer.getBlockPos()).playerOwner == serverPlayer.getUuid() && serverPlayer.getWorld().getRegistryKey() == PocketDimensionPlots.VOID) {
+                                return ActionResult.PASS;
+                            }
+                        }
+
+                        if(LuckPermsProvider.get().getPlayerAdapter(ServerPlayerEntity.class).getUser(serverPlayer).getCachedData().getPermissionData().checkPermission("metatweaks.paintingBreaking").asBoolean()) {
+                            return ActionResult.PASS;
+                        }
+            //    }
             }
-            return ActionResult.PASS;
+            return ActionResult.FAIL;
         });
 
         AttackEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
