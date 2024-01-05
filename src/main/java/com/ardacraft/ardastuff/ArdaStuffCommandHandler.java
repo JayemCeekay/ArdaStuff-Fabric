@@ -66,7 +66,7 @@ public class ArdaStuffCommandHandler {
         );
 
         //register cpaintingbreaking
-        dispatcher.register(CommandManager.literal("cpaintingbreaking").requires(serverCommandSource -> {
+       /* dispatcher.register(CommandManager.literal("cpaintingbreaking").requires(serverCommandSource -> {
                             try {
                                 return FabricWorldEdit.inst.getPermissionsProvider().hasPermission(serverCommandSource.getPlayerOrThrow(), "metatweaks.cpaintingbreaking");
                             } catch (CommandSyntaxException e) {
@@ -84,7 +84,7 @@ public class ArdaStuffCommandHandler {
                             }
                             return 1;
                         })
-        );
+        );*/
 
         dispatcher.register(CommandManager.literal("sauronsays")
                 .requires(source -> source.hasPermissionLevel(2))
