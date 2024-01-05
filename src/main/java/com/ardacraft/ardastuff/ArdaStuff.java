@@ -129,7 +129,8 @@ public class ArdaStuff implements ModInitializer {
         });
 
         UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
-            if (player.getMainHandStack().getItem() instanceof net.minecraft.item.SpawnEggItem) {
+            if (player.getMainHandStack().getItem() instanceof net.minecraft.item.SpawnEggItem)
+            {
                 Log.info(LogCategory.LOG, "Spawn egg used " + Registry.ITEM.getId(player.getStackInHand(hand).getItem()));
                 return ActionResult.FAIL;
             }
@@ -146,11 +147,7 @@ public class ArdaStuff implements ModInitializer {
                 }
             }
 
-            if (blockProtection(player, world, hand, hitResult)) {
-                return ActionResult.FAIL;
-            } else {
-                return ActionResult.PASS;
-            }
+            return isBlockProtectedAgainstUseAction(player, world, hand, hitResult) ? ActionResult.FAIL : ActionResult.PASS;
         });
 
         UseItemCallback.EVENT.register((player, world, hand) -> {
@@ -286,21 +283,32 @@ public class ArdaStuff implements ModInitializer {
     }
 
 
-    public boolean blockProtection(PlayerEntity player, World world, Hand hand, BlockHitResult hitResult) {
-        if (!Registry.BLOCK.getId(world.getBlockState(hitResult.getBlockPos()).getBlock()).toString().endsWith("_door") && !Registry.BLOCK.getId(world.getBlockState(hitResult.getBlockPos()).getBlock()).toString().endsWith("_gate")) {
-            if (player instanceof ServerPlayerEntity serverPlayer) {
-                try {
-                    if (!LuckPermsProvider.get().getPlayerAdapter(ServerPlayerEntity.class).getUser(serverPlayer).getCachedData().getPermissionData().checkPermission("metatweaks.protection").asBoolean()) {
-                        return true;
-                    }
-                } catch (IllegalStateException e) {
-                    e.printStackTrace();
+    public boolean isHandEmpty(PlayerEntity player){
+        return player.getMainHandStack().isEmpty() && player.getOffHandStack().isEmpty();
+    }
+
+    public boolean hasPermission(PlayerEntity player, String permission)
+    {
+        if (player instanceof ServerPlayerEntity serverPlayer)
+        {
+            try {
+                if (LuckPermsProvider.get().getPlayerAdapter(ServerPlayerEntity.class).getUser(serverPlayer).getCachedData().getPermissionData().checkPermission(permission).asBoolean()) {
+                    return true;
                 }
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
             }
-        } else if (player.isSneaking()) {
-            return true;
         }
+
         return false;
+    }
+
+    public boolean isBlockProtectedAgainstUseAction(PlayerEntity player, World world, Hand hand, BlockHitResult hitResult) {
+
+        var blockName = Registry.BLOCK.getId(world.getBlockState(hitResult.getBlockPos()).getBlock()).toString().toLowerCase();
+
+        if (isHandEmpty(player) && (blockName.endsWith("_door") || blockName.endsWith("_gate"))) return false;
+        return !hasPermission(player, "metatweaks.protection");
     }
 
 }
