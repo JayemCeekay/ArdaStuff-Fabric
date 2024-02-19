@@ -270,6 +270,8 @@ public class ArdaStuff implements ModInitializer {
                                 player.getScoreboard().addPlayerToTeam(player.getEntityName(), player.getScoreboard().getTeam("Community_Manager"));
                         case "apprentice" ->
                                 player.getScoreboard().addPlayerToTeam(player.getEntityName(), player.getScoreboard().getTeam("Apprentice"));
+                        case "media_manager" ->
+                            player.getScoreboard().addPlayerToTeam(player.getEntityName(), player.getScoreboard().getTeam("Media_Manager"));
                         case "patron" ->
                                 player.getScoreboard().addPlayerToTeam(player.getEntityName(), player.getScoreboard().getTeam("Patron"));
                         case "default" ->
