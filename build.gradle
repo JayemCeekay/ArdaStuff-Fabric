@@ -43,6 +43,7 @@ dependencies {
     modImplementation("io.github.fabricators_of_create.Porting-Lib:porting-lib:2.1.811+1.19.2")
     compileOnly("net.luckperms:api:5.4")
     modLocalRuntime("maven.modrinth:lazydfu:${lazydfu_version}")
+    modImplementation (include('org.json:json:20220924'))
     modImplementation 'xyz.nucleoid:stimuli:0.4.1+1.19.1'
     modImplementation("name:PocketDimensionPlots-Fabric-1.19.2-0.1.0")
 }

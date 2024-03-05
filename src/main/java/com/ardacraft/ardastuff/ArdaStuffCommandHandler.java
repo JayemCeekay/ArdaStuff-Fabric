@@ -2,20 +2,13 @@ package com.ardacraft.ardastuff;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.sk89q.worldedit.fabric.FabricWorldEdit;
-import net.minecraft.block.BlockState;
 import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.command.argument.ArgumentTypes;
-import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.ItemStack;
-import net.minecraft.potion.PotionUtil;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -24,10 +17,7 @@ import net.minecraft.text.Text;
 import net.minecraft.text.Texts;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.registry.Registry;
-
-import java.util.*;
 
 public class ArdaStuffCommandHandler {
 
@@ -35,6 +25,7 @@ public class ArdaStuffCommandHandler {
 
         FabricWorldEdit.inst.getPermissionsProvider().registerPermission("metatweaks.cwaterspread");
         FabricWorldEdit.inst.getPermissionsProvider().registerPermission("metatweaks.cpaintingbreaking");
+        FabricWorldEdit.inst.getPermissionsProvider().registerPermission("metatweaks.askgandalf");
 
         dispatcher.register(CommandManager.literal("guide").executes(context -> {
             ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
@@ -85,7 +76,67 @@ public class ArdaStuffCommandHandler {
                             return 1;
                         })
         );*/
+/*
+        dispatcher.register(CommandManager.literal("askGandalf").requires(serverCommandSource -> {
+            try {
+                return FabricWorldEdit.inst.getPermissionsProvider().hasPermission(serverCommandSource.getPlayerOrThrow(), "metatweaks.askgandalf");
+            } catch (CommandSyntaxException e) {
+                throw new RuntimeException(e);
+            }
+        } ).then(CommandManager.argument("message", StringArgumentType.greedyString()).executes(context -> {
+            ServerPlayerEntity player = context.getSource().getPlayer();
+            String message = StringArgumentType.getString(context, "message");
+            context.getSource().getServer().getPlayerManager().broadcast(Text.of(context.getSource().getName() + ": " + message), false);
+            String response = null;
+            try {
+                response = ChatGPT.sendPromptToChatGPT("gandalf", message, "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");
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            context.getSource().getServer().getPlayerManager().broadcast(Text.empty().append(Text.literal("[GANDALF] ").formatted(Formatting.GOLD)).append(Text.literal(response)), false);
+            return Command.SINGLE_SUCCESS;
+        })));
 
+        dispatcher.register(CommandManager.literal("askSauron").requires(serverCommandSource -> {
+            try {
+                return FabricWorldEdit.inst.getPermissionsProvider().hasPermission(serverCommandSource.getPlayerOrThrow(), "metatweaks.askgandalf");
+            } catch (CommandSyntaxException e) {
+                throw new RuntimeException(e);
+            }
+        } ).then(CommandManager.argument("message", StringArgumentType.greedyString()).executes(context -> {
+            ServerPlayerEntity player = context.getSource().getPlayer();
+            String message = StringArgumentType.getString(context, "message");
+            context.getSource().getServer().getPlayerManager().broadcast(Text.of(context.getSource().getName() + ": " + message), false);
+            String response = null;
+            try {
+                response = ChatGPT.sendPromptToChatGPT("sauron", message, "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");
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            context.getSource().getServer().getPlayerManager().broadcast(Text.empty().append(Text.literal("[SAURON] ").formatted(Formatting.DARK_RED)).append(Text.literal(response)), false);
+            return Command.SINGLE_SUCCESS;
+        })));
+
+        dispatcher.register(CommandManager.literal("askGollum").requires(serverCommandSource -> {
+            try {
+                return FabricWorldEdit.inst.getPermissionsProvider().hasPermission(serverCommandSource.getPlayerOrThrow(), "metatweaks.askgandalf");
+            } catch (CommandSyntaxException e) {
+                throw new RuntimeException(e);
+            }
+        } ).then(CommandManager.argument("message", StringArgumentType.greedyString()).executes(context -> {
+            ServerPlayerEntity player = context.getSource().getPlayer();
+            String message = StringArgumentType.getString(context, "message");
+            context.getSource().getServer().getPlayerManager().broadcast(Text.of(context.getSource().getName() + ": " + message), false);
+            String response = null;
+            try {
+                response = ChatGPT.sendPromptToChatGPT("gollum", message, "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");
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            context.getSource().getServer().getPlayerManager().broadcast(Text.empty().append(Text.literal("[GOLLUM] ").formatted(Formatting.YELLOW)).append(Text.literal(response)), false);
+            return Command.SINGLE_SUCCESS;
+        })));
+*/
         dispatcher.register(CommandManager.literal("sauronsays")
                 .requires(source -> source.hasPermissionLevel(2))
                 .then(CommandManager.argument("message", StringArgumentType.greedyString()).executes(
@@ -105,8 +156,7 @@ public class ArdaStuffCommandHandler {
         dispatcher.register(CommandManager.literal("nv").executes(context -> ArdaStuffCommandHandler.processNightvision(context.getSource())));
     }
 
-    private static int processNightvision(ServerCommandSource source)
-    {
+    private static int processNightvision(ServerCommandSource source) {
         if (!source.isExecutedByPlayer()) return 0;
 
         var player = source.getPlayer();
@@ -122,7 +172,8 @@ public class ArdaStuffCommandHandler {
 
         var statusEffect = player.getStatusEffect(StatusEffects.NIGHT_VISION);
 
-        if (statusEffect == null) player.addStatusEffect(new StatusEffectInstance(StatusEffects.NIGHT_VISION, Integer.MAX_VALUE, 255, false, false));
+        if (statusEffect == null)
+            player.addStatusEffect(new StatusEffectInstance(StatusEffects.NIGHT_VISION, Integer.MAX_VALUE, 255, false, false));
         else player.removeStatusEffect(StatusEffects.NIGHT_VISION);
 
         source.sendFeedback(statusEffect == null ? enabled : disabled, false);

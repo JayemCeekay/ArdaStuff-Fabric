@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "AbstractBlockMixin",
+    "CarvedPumpkinBlockMixin",
     "ChickenMixin",
     "ConcretePowderBlockMixin",
     "CreateFilteringBehaviourMixin",
@@ -15,6 +16,7 @@
     "FarmlandBlockMixin",
     "FluidSpreadMixin",
     "GrassSpreadMixin",
+    "HeightMapMixin",
     "LeavesBlockMixin",
     "RespawnAnchorMixin",
     "SaplingGrowthMixin",

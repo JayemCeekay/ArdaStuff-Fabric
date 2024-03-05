@@ -367,7 +367,9 @@ public class ArdaStuff implements ModInitializer {
                     if (!LuckPermsProvider.get().getPlayerAdapter(ServerPlayerEntity.class).getUser(player).getCachedData().getPermissionData().checkPermission("metatweaks.hasJoined").asBoolean()) {
                         world.getServer().getPlayerManager().broadcast(Texts.setStyleIfAbsent(Text.literal("Welcome to ArdaCraft, " + player.getDisplayName().getString() + "! Please check out your guide book!"), Style.EMPTY.withColor(TextColor.parse("#416cba"))), false);
                         ItemStack stack = Registry.ITEM.get(new Identifier("patchouli", "guide_book")).getDefaultStack();
+                        ItemStack pathfinder = Registry.ITEM.get(new Identifier("ardapaths", "path_revealer")).getDefaultStack();
                         stack.getOrCreateNbt().putString("patchouli:book", "patchouli:ac_guide");
+                        player.giveItemStack(pathfinder);
                         player.giveItemStack(stack);
                         LuckPermsProvider.get().getUserManager().modifyUser(player.getUuid(), user -> user.data().add(Node.builder("metatweaks.hasJoined").build()));
                         player.teleport(player.getWorld(), -1468, 25, -826, 0, -10);
