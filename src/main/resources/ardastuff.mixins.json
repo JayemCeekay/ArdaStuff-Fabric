@@ -18,6 +18,7 @@
     "GrassSpreadMixin",
     "HeightMapMixin",
     "LeavesBlockMixin",
+    "ServerPlayerEntity",
     "RespawnAnchorMixin",
     "SaplingGrowthMixin",
     "SpreadableBlockMixin",

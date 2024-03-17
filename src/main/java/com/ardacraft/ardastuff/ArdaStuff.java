@@ -10,8 +10,11 @@ import net.fabricmc.loader.impl.util.log.Log;
 import net.fabricmc.loader.impl.util.log.LogCategory;
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.node.Node;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.scoreboard.Team;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -366,11 +369,16 @@ public class ArdaStuff implements ModInitializer {
                 try {
                     if (!LuckPermsProvider.get().getPlayerAdapter(ServerPlayerEntity.class).getUser(player).getCachedData().getPermissionData().checkPermission("metatweaks.hasJoined").asBoolean()) {
                         world.getServer().getPlayerManager().broadcast(Texts.setStyleIfAbsent(Text.literal("Welcome to ArdaCraft, " + player.getDisplayName().getString() + "! Please check out your guide book!"), Style.EMPTY.withColor(TextColor.parse("#416cba"))), false);
-                        ItemStack stack = Registry.ITEM.get(new Identifier("patchouli", "guide_book")).getDefaultStack();
+                        ItemStack guideBook = Registry.ITEM.get(new Identifier("patchouli", "guide_book")).getDefaultStack();
                         ItemStack pathfinder = Registry.ITEM.get(new Identifier("ardapaths", "path_revealer")).getDefaultStack();
-                        stack.getOrCreateNbt().putString("patchouli:book", "patchouli:ac_guide");
-                        player.giveItemStack(pathfinder);
-                        player.giveItemStack(stack);
+
+                        if (guideBook == null || pathfinder == null)
+                        {
+                            guideBook.getOrCreateNbt().putString("patchouli:book", "patchouli:ac_guide");
+                            player.giveItemStack(pathfinder);
+                            player.giveItemStack(guideBook);
+                        }
+
                         LuckPermsProvider.get().getUserManager().modifyUser(player.getUuid(), user -> user.data().add(Node.builder("metatweaks.hasJoined").build()));
                         player.teleport(player.getWorld(), -1468, 25, -826, 0, -10);
                     }
@@ -380,29 +388,27 @@ public class ArdaStuff implements ModInitializer {
 
                 try {
                     String group = LuckPermsProvider.get().getPlayerAdapter(ServerPlayerEntity.class).getUser(player).getPrimaryGroup().toLowerCase();
-                    switch (group) {
-                        case "developer" ->
-                                player.getScoreboard().addPlayerToTeam(player.getEntityName(), player.getScoreboard().getTeam("Developer"));
-                        case "overseer" ->
-                                player.getScoreboard().addPlayerToTeam(player.getEntityName(), player.getScoreboard().getTeam("Overseer"));
-                        case "landscaperplus" ->
-                                player.getScoreboard().addPlayerToTeam(player.getEntityName(), player.getScoreboard().getTeam("Landscaper+"));
-                        case "landscaper" ->
-                                player.getScoreboard().addPlayerToTeam(player.getEntityName(), player.getScoreboard().getTeam("Landscaper"));
-                        case "builderplus" ->
-                                player.getScoreboard().addPlayerToTeam(player.getEntityName(), player.getScoreboard().getTeam("Builder+"));
-                        case "builder" ->
-                                player.getScoreboard().addPlayerToTeam(player.getEntityName(), player.getScoreboard().getTeam("Builder"));
-                        case "community_manager" ->
-                                player.getScoreboard().addPlayerToTeam(player.getEntityName(), player.getScoreboard().getTeam("Community_Manager"));
-                        case "apprentice" ->
-                                player.getScoreboard().addPlayerToTeam(player.getEntityName(), player.getScoreboard().getTeam("Apprentice"));
-                        case "media_manager" ->
-                                player.getScoreboard().addPlayerToTeam(player.getEntityName(), player.getScoreboard().getTeam("Media_Manager"));
-                        case "patron" ->
-                                player.getScoreboard().addPlayerToTeam(player.getEntityName(), player.getScoreboard().getTeam("Patron"));
-                        case "default" ->
-                                player.getScoreboard().addPlayerToTeam(player.getEntityName(), player.getScoreboard().getTeam("Guest"));
+
+                    var teamName = switch (group)
+                    {
+                        case "developer" -> "Developer";
+                        case "overseer" -> "Overseer";
+                        case "landscaperplus" -> "Landscaper+";
+                        case "landscaper" -> "Landscaper";
+                        case "builderplus" -> "Builder+";
+                        case "builder" -> "Builder";
+                        case "community_manager" -> "Community_Manager";
+                        case "apprentice" -> "Apprentice";
+                        case "media_manager" -> "Media_Manager";
+                        case "patron" -> "Patron";
+                        default -> "Guest";
+                    };
+
+                    var team = player.getScoreboard().getTeam(teamName);
+
+                    if (team != null)
+                    {
+                        player.getScoreboard().addPlayerToTeam(player.getEntityName(), team);
                     }
                 } catch (IllegalStateException e) {
                     e.printStackTrace();

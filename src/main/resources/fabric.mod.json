@@ -19,6 +19,7 @@
   "mixins": [
     "ardastuff.mixins.json"
   ],
+  "accessWidener": "ardastuff.accesswidener",
   "depends": {
     "fabricloader": ">=0.14.17",
     "fabric": "*",

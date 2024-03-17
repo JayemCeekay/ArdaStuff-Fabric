@@ -6,8 +6,14 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.sk89q.worldedit.fabric.FabricWorldEdit;
 import net.minecraft.command.CommandRegistryAccess;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.entity.passive.HorseColor;
+import net.minecraft.entity.passive.HorseEntity;
+import net.minecraft.entity.passive.HorseMarking;
+import net.minecraft.entity.vehicle.BoatEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
@@ -17,11 +23,15 @@ import net.minecraft.text.Text;
 import net.minecraft.text.Texts;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Util;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.util.registry.Registry;
 
 public class ArdaStuffCommandHandler {
 
-    public static void ArdaStuffCommands(CommandDispatcher<ServerCommandSource> dispatcher, CommandRegistryAccess registryAccess, CommandManager.RegistrationEnvironment environment) {
+    public static void ArdaStuffCommands(CommandDispatcher<ServerCommandSource> dispatcher, CommandRegistryAccess registryAccess, CommandManager.RegistrationEnvironment environment)
+    {
 
         FabricWorldEdit.inst.getPermissionsProvider().registerPermission("metatweaks.cwaterspread");
         FabricWorldEdit.inst.getPermissionsProvider().registerPermission("metatweaks.cpaintingbreaking");
@@ -154,6 +164,55 @@ public class ArdaStuffCommandHandler {
         //register nightvision
         dispatcher.register(CommandManager.literal("nightvision").executes(context -> ArdaStuffCommandHandler.processNightvision(context.getSource())));
         dispatcher.register(CommandManager.literal("nv").executes(context -> ArdaStuffCommandHandler.processNightvision(context.getSource())));
+
+        dispatcher.register(CommandManager.literal("mount").executes(context -> {
+            if (!context.getSource().isExecutedByPlayer()) return Command.SINGLE_SUCCESS;
+
+            var player = context.getSource().getPlayer();
+            if (player == null) return Command.SINGLE_SUCCESS;
+
+            var horse = new HorseEntity(EntityType.HORSE, context.getSource().getWorld());
+            horse.setTame(true);
+            horse.setOwnerUuid(player.getUuid());
+            horse.saddle(null);
+            horse.setCustomName(Text.literal("deleteme"));
+            horse.setCustomNameVisible(false);
+
+            Random random = player.getWorld().getRandom();
+            var horseColor = Util.getRandom(HorseColor.values(), random);
+            var horseMarkings = Util.getRandom(HorseMarking.values(), random);
+
+            horse.setVariant(horseColor, horseMarkings);
+
+            var position = player.getPos();
+            horse.teleport(position.x, position.y, position.z);
+
+            player.getWorld().spawnEntity(horse);
+
+            player.startRiding(horse, true);
+
+            return Command.SINGLE_SUCCESS;
+        }));
+
+        dispatcher.register(CommandManager.literal("boat").executes(context -> {
+            if (!context.getSource().isExecutedByPlayer()) return Command.SINGLE_SUCCESS;
+
+            var player = context.getSource().getPlayer();
+            if (player == null) return Command.SINGLE_SUCCESS;
+            var position = player.getPos();
+
+            var boat = new BoatEntity(context.getSource().getWorld(), position.x, position.y, position.z);
+            boat.setCustomName(Text.literal("deleteme"));
+
+            boat.setYaw(player.getYaw());
+
+            player.getWorld().spawnEntity(boat);
+
+            player.startRiding(boat, true);
+
+            return Command.SINGLE_SUCCESS;
+        }));
+
     }
 
     private static int processNightvision(ServerCommandSource source) {
