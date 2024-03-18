@@ -391,6 +391,8 @@ public class ArdaStuff implements ModInitializer {
 
                     var teamName = switch (group)
                     {
+                        case "admin" -> "Admin";
+                        case "steward" -> "Steward";
                         case "developer" -> "Developer";
                         case "overseer" -> "Overseer";
                         case "landscaperplus" -> "Landscaper+";
