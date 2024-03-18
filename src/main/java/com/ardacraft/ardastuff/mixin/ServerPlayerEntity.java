@@ -13,9 +13,16 @@ public class ServerPlayerEntity
     @Inject(method = "stopRiding()V", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)
     private void stopRidingInject(CallbackInfo ci, Entity entity)
     {
-        if (entity.getCustomName() != null && entity.getCustomName().getString().equals("deleteme"))
+        try
         {
-            entity.discard();
+            if (entity != null && entity.getCustomName() != null && entity.getCustomName().getString().equals("deleteme"))
+            {
+                entity.discard();
+            }
+        }
+        catch(Exception ignored)
+        {
+
         }
     }
 }
