@@ -1,7 +1,5 @@
 package com.ardacraft.ardastuff;
 
-import net.coolsimulations.PocketDimensionPlots.PocketDimensionPlots;
-import net.coolsimulations.PocketDimensionPlots.PocketDimensionPlotsUtils;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
@@ -12,6 +10,7 @@ import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.node.Node;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -22,7 +21,6 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import xyz.nucleoid.stimuli.Stimuli;
 import xyz.nucleoid.stimuli.event.projectile.ProjectileHitEvent;
@@ -98,7 +96,7 @@ public class ArdaStuff implements ModInitializer {
 
         PlayerBlockBreakEvents.BEFORE.register((world, player, pos, state, blockEntity) -> {
             if (player instanceof ServerPlayerEntity serverPlayer) {
-                if (!LuckPermsProvider.get().getPlayerAdapter(ServerPlayerEntity.class).getUser(serverPlayer).getCachedData().getPermissionData().checkPermission("metatweaks.create").asBoolean() && Registry.BLOCK.getId(state.getBlock()).getNamespace().equalsIgnoreCase("create")) {
+                if (!LuckPermsProvider.get().getPlayerAdapter(ServerPlayerEntity.class).getUser(serverPlayer).getCachedData().getPermissionData().checkPermission("metatweaks.create").asBoolean() && Registries.BLOCK.getId(state.getBlock()).getNamespace().equalsIgnoreCase("create")) {
                     return false;
                 }
             }
@@ -116,54 +114,54 @@ public class ArdaStuff implements ModInitializer {
 
         UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
             if (player.getMainHandStack().getItem() instanceof net.minecraft.item.SpawnEggItem) {
-                Log.info(LogCategory.LOG, "Spawn egg used " + Registry.ITEM.getId(player.getStackInHand(hand).getItem()));
+                Log.info(LogCategory.LOG, "Spawn egg used " + Registries.ITEM.getId(player.getStackInHand(hand).getItem()));
                 return ActionResult.FAIL;
             }
 
             if (!hasPermission(player, "metatweaks.protection")) {
                 if (player.getMainHandStack().getItem() instanceof net.minecraft.item.MinecartItem) {
-                    Log.info(LogCategory.LOG, "Minecart used " + Registry.ITEM.getId(player.getStackInHand(hand).getItem()));
+                    Log.info(LogCategory.LOG, "Minecart used " + Registries.ITEM.getId(player.getStackInHand(hand).getItem()));
                     return ActionResult.FAIL;
                 }
 
                 if (player.getMainHandStack().getItem() instanceof net.minecraft.item.BucketItem) {
-                    Log.info(LogCategory.LOG, "Bucket used " + Registry.ITEM.getId(player.getStackInHand(hand).getItem()));
+                    Log.info(LogCategory.LOG, "Bucket used " + Registries.ITEM.getId(player.getStackInHand(hand).getItem()));
                     return ActionResult.FAIL;
                 }
 
                 if (player.getMainHandStack().getItem() instanceof net.minecraft.item.FlintAndSteelItem) {
-                    Log.info(LogCategory.LOG, "Flint and Steel used " + Registry.ITEM.getId(player.getStackInHand(hand).getItem()));
+                    Log.info(LogCategory.LOG, "Flint and Steel used " + Registries.ITEM.getId(player.getStackInHand(hand).getItem()));
                     return ActionResult.FAIL;
                 }
 
                 if (player.getMainHandStack().getItem() instanceof net.minecraft.item.TridentItem) {
-                    Log.info(LogCategory.LOG, "Trident used " + Registry.ITEM.getId(player.getStackInHand(hand).getItem()));
+                    Log.info(LogCategory.LOG, "Trident used " + Registries.ITEM.getId(player.getStackInHand(hand).getItem()));
                     return ActionResult.FAIL;
                 }
 
                 if (player.getMainHandStack().getItem() instanceof net.minecraft.item.BoatItem) {
-                    Log.info(LogCategory.LOG, "Boat used " + Registry.ITEM.getId(player.getStackInHand(hand).getItem()));
+                    Log.info(LogCategory.LOG, "Boat used " + Registries.ITEM.getId(player.getStackInHand(hand).getItem()));
                     return ActionResult.FAIL;
                 }
 
                 if (player.getMainHandStack().getItem() instanceof net.minecraft.item.EggItem) {
-                    Log.info(LogCategory.LOG, "Egg used " + Registry.ITEM.getId(player.getStackInHand(hand).getItem()));
+                    Log.info(LogCategory.LOG, "Egg used " + Registries.ITEM.getId(player.getStackInHand(hand).getItem()));
                     return ActionResult.FAIL;
                 }
 
                 if (player.getMainHandStack().getItem() instanceof net.minecraft.item.MilkBucketItem) {
-                    Log.info(LogCategory.LOG, "Milk Bucket used " + Registry.ITEM.getId(player.getStackInHand(hand).getItem()));
+                    Log.info(LogCategory.LOG, "Milk Bucket used " + Registries.ITEM.getId(player.getStackInHand(hand).getItem()));
                     return ActionResult.FAIL;
                 }
 
                 if (player.getMainHandStack().getItem() instanceof net.minecraft.item.ThrowablePotionItem) {
-                    Log.info(LogCategory.LOG, "Throwable Potion used " + Registry.ITEM.getId(player.getStackInHand(hand).getItem()));
+                    Log.info(LogCategory.LOG, "Throwable Potion used " + Registries.ITEM.getId(player.getStackInHand(hand).getItem()));
                     return ActionResult.FAIL;
                 }
 
             }
 
-            if (Registry.ITEM.getId(player.getStackInHand(hand).getItem()).toString().startsWith("create:")) {
+            if (Registries.ITEM.getId(player.getStackInHand(hand).getItem()).toString().startsWith("create:")) {
                 if (player instanceof ServerPlayerEntity serverPlayer) {
                     try {
                         if (!LuckPermsProvider.get().getPlayerAdapter(ServerPlayerEntity.class).getUser(serverPlayer).getCachedData().getPermissionData().checkPermission("metatweaks.create").asBoolean()) {
@@ -175,6 +173,8 @@ public class ArdaStuff implements ModInitializer {
                 }
             }
 
+
+            /* TODO
             if (player instanceof ServerPlayerEntity serverPlayer) {
                 if (LuckPermsProvider.get().getPlayerAdapter(ServerPlayerEntity.class).getUser(serverPlayer).getPrimaryGroup().equalsIgnoreCase("default")) {
                     if (serverPlayer.getWorld().getRegistryKey() == PocketDimensionPlots.VOID) {
@@ -184,56 +184,56 @@ public class ArdaStuff implements ModInitializer {
                         return ActionResult.FAIL;
                     }
                 }
-            }
+            }*/
 
             return isBlockProtectedAgainstUseAction(player, world, hand, hitResult) ? ActionResult.FAIL : ActionResult.PASS;
         });
 
         UseEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
             if (player.getMainHandStack().getItem() instanceof net.minecraft.item.SpawnEggItem) {
-                Log.info(LogCategory.LOG, "Spawn egg used " + Registry.ITEM.getId(player.getStackInHand(hand).getItem()));
+                Log.info(LogCategory.LOG, "Spawn egg used " + Registries.ITEM.getId(player.getStackInHand(hand).getItem()));
                 return ActionResult.FAIL;
             }
 
             if (!hasPermission(player, "metatweaks.protection")) {
 
                 if (player.getMainHandStack().getItem() instanceof net.minecraft.item.MinecartItem) {
-                    Log.info(LogCategory.LOG, "Minecart used " + Registry.ITEM.getId(player.getStackInHand(hand).getItem()));
+                    Log.info(LogCategory.LOG, "Minecart used " + Registries.ITEM.getId(player.getStackInHand(hand).getItem()));
                     return ActionResult.FAIL;
                 }
 
                 if (player.getMainHandStack().getItem() instanceof net.minecraft.item.BucketItem) {
-                    Log.info(LogCategory.LOG, "Bucket used " + Registry.ITEM.getId(player.getStackInHand(hand).getItem()));
+                    Log.info(LogCategory.LOG, "Bucket used " + Registries.ITEM.getId(player.getStackInHand(hand).getItem()));
                     return ActionResult.FAIL;
                 }
 
                 if (player.getMainHandStack().getItem() instanceof net.minecraft.item.FlintAndSteelItem) {
-                    Log.info(LogCategory.LOG, "Flint and Steel used " + Registry.ITEM.getId(player.getStackInHand(hand).getItem()));
+                    Log.info(LogCategory.LOG, "Flint and Steel used " + Registries.ITEM.getId(player.getStackInHand(hand).getItem()));
                     return ActionResult.FAIL;
                 }
 
                 if (player.getMainHandStack().getItem() instanceof net.minecraft.item.TridentItem) {
-                    Log.info(LogCategory.LOG, "Trident used " + Registry.ITEM.getId(player.getStackInHand(hand).getItem()));
+                    Log.info(LogCategory.LOG, "Trident used " + Registries.ITEM.getId(player.getStackInHand(hand).getItem()));
                     return ActionResult.FAIL;
                 }
 
                 if (player.getMainHandStack().getItem() instanceof net.minecraft.item.BoatItem) {
-                    Log.info(LogCategory.LOG, "Boat used " + Registry.ITEM.getId(player.getStackInHand(hand).getItem()));
+                    Log.info(LogCategory.LOG, "Boat used " + Registries.ITEM.getId(player.getStackInHand(hand).getItem()));
                     return ActionResult.FAIL;
                 }
 
                 if (player.getMainHandStack().getItem() instanceof net.minecraft.item.EggItem) {
-                    Log.info(LogCategory.LOG, "Egg used " + Registry.ITEM.getId(player.getStackInHand(hand).getItem()));
+                    Log.info(LogCategory.LOG, "Egg used " + Registries.ITEM.getId(player.getStackInHand(hand).getItem()));
                     return ActionResult.FAIL;
                 }
 
                 if (player.getMainHandStack().getItem() instanceof net.minecraft.item.MilkBucketItem) {
-                    Log.info(LogCategory.LOG, "Milk Bucket used " + Registry.ITEM.getId(player.getStackInHand(hand).getItem()));
+                    Log.info(LogCategory.LOG, "Milk Bucket used " + Registries.ITEM.getId(player.getStackInHand(hand).getItem()));
                     return ActionResult.FAIL;
                 }
 
                 if (player.getMainHandStack().getItem() instanceof net.minecraft.item.ThrowablePotionItem) {
-                    Log.info(LogCategory.LOG, "Throwable Potion used " + Registry.ITEM.getId(player.getStackInHand(hand).getItem()));
+                    Log.info(LogCategory.LOG, "Throwable Potion used " + Registries.ITEM.getId(player.getStackInHand(hand).getItem()));
                     return ActionResult.FAIL;
                 }
 
@@ -244,6 +244,7 @@ public class ArdaStuff implements ModInitializer {
                     if (LuckPermsProvider.get().getPlayerAdapter(ServerPlayerEntity.class).getUser(serverPlayer).getCachedData().getPermissionData().checkPermission("metatweaks.protection").asBoolean()) {
                         //check if user is default rank (guest)
                         //check if use is in their plot, if not, fail
+                        /* TODO
                         if (LuckPermsProvider.get().getPlayerAdapter(ServerPlayerEntity.class).getUser(serverPlayer).getPrimaryGroup().equalsIgnoreCase("default")) {
                             if (serverPlayer.getWorld().getRegistryKey() == PocketDimensionPlots.VOID) {
                                 if (PocketDimensionPlotsUtils.getPlotFromCoordinates(serverPlayer.getBlockPos()).playerOwner == serverPlayer.getUuid()) {
@@ -251,7 +252,7 @@ public class ArdaStuff implements ModInitializer {
                                 }
                                 return ActionResult.FAIL;
                             }
-                        }
+                        }*/
                         return ActionResult.PASS;
                     }
                 } catch (IllegalStateException e) {
@@ -263,54 +264,54 @@ public class ArdaStuff implements ModInitializer {
 
         UseItemCallback.EVENT.register((player, world, hand) -> {
 
-            if (Registry.ITEM.getId(player.getStackInHand(hand).getItem()).toString().startsWith("patchouli:guide_book")) {
+            if (Registries.ITEM.getId(player.getStackInHand(hand).getItem()).toString().startsWith("patchouli:guide_book")) {
                 return TypedActionResult.pass(player.getStackInHand(hand));
             }
 
             if (player.getMainHandStack().getItem() instanceof net.minecraft.item.SpawnEggItem) {
-                Log.info(LogCategory.LOG, "Spawn egg used " + Registry.ITEM.getId(player.getStackInHand(hand).getItem()));
+                Log.info(LogCategory.LOG, "Spawn egg used " + Registries.ITEM.getId(player.getStackInHand(hand).getItem()));
                 return TypedActionResult.fail(ItemStack.EMPTY);
             }
 
             if (!hasPermission(player, "metatweaks.protection")) {
 
                 if (player.getMainHandStack().getItem() instanceof net.minecraft.item.MinecartItem) {
-                    Log.info(LogCategory.LOG, "Minecart used " + Registry.ITEM.getId(player.getStackInHand(hand).getItem()));
+                    Log.info(LogCategory.LOG, "Minecart used " + Registries.ITEM.getId(player.getStackInHand(hand).getItem()));
                     return TypedActionResult.fail(ItemStack.EMPTY);
                 }
 
                 if (player.getMainHandStack().getItem() instanceof net.minecraft.item.BucketItem) {
-                    Log.info(LogCategory.LOG, "Bucket used " + Registry.ITEM.getId(player.getStackInHand(hand).getItem()));
+                    Log.info(LogCategory.LOG, "Bucket used " + Registries.ITEM.getId(player.getStackInHand(hand).getItem()));
                     return TypedActionResult.fail(ItemStack.EMPTY);
                 }
 
                 if (player.getMainHandStack().getItem() instanceof net.minecraft.item.FlintAndSteelItem) {
-                    Log.info(LogCategory.LOG, "Flint and Steel used " + Registry.ITEM.getId(player.getStackInHand(hand).getItem()));
+                    Log.info(LogCategory.LOG, "Flint and Steel used " + Registries.ITEM.getId(player.getStackInHand(hand).getItem()));
                     return TypedActionResult.fail(ItemStack.EMPTY);
                 }
 
                 if (player.getMainHandStack().getItem() instanceof net.minecraft.item.TridentItem) {
-                    Log.info(LogCategory.LOG, "Trident used " + Registry.ITEM.getId(player.getStackInHand(hand).getItem()));
+                    Log.info(LogCategory.LOG, "Trident used " + Registries.ITEM.getId(player.getStackInHand(hand).getItem()));
                     return TypedActionResult.fail(ItemStack.EMPTY);
                 }
 
                 if (player.getMainHandStack().getItem() instanceof net.minecraft.item.BoatItem) {
-                    Log.info(LogCategory.LOG, "Boat used " + Registry.ITEM.getId(player.getStackInHand(hand).getItem()));
+                    Log.info(LogCategory.LOG, "Boat used " + Registries.ITEM.getId(player.getStackInHand(hand).getItem()));
                     return TypedActionResult.fail(ItemStack.EMPTY);
                 }
 
                 if (player.getMainHandStack().getItem() instanceof net.minecraft.item.EggItem) {
-                    Log.info(LogCategory.LOG, "Egg used " + Registry.ITEM.getId(player.getStackInHand(hand).getItem()));
+                    Log.info(LogCategory.LOG, "Egg used " + Registries.ITEM.getId(player.getStackInHand(hand).getItem()));
                     return TypedActionResult.fail(ItemStack.EMPTY);
                 }
 
                 if (player.getMainHandStack().getItem() instanceof net.minecraft.item.MilkBucketItem) {
-                    Log.info(LogCategory.LOG, "Milk Bucket used " + Registry.ITEM.getId(player.getStackInHand(hand).getItem()));
+                    Log.info(LogCategory.LOG, "Milk Bucket used " + Registries.ITEM.getId(player.getStackInHand(hand).getItem()));
                     return TypedActionResult.fail(ItemStack.EMPTY);
                 }
 
                 if (player.getMainHandStack().getItem() instanceof net.minecraft.item.ThrowablePotionItem) {
-                    Log.info(LogCategory.LOG, "Throwable Potion used " + Registry.ITEM.getId(player.getStackInHand(hand).getItem()));
+                    Log.info(LogCategory.LOG, "Throwable Potion used " + Registries.ITEM.getId(player.getStackInHand(hand).getItem()));
                     return TypedActionResult.fail(ItemStack.EMPTY);
                 }
 
@@ -318,7 +319,7 @@ public class ArdaStuff implements ModInitializer {
 
             }
 
-            if (Registry.ITEM.getId(player.getStackInHand(hand).getItem()).toString().startsWith("create:")) {
+            if (Registries.ITEM.getId(player.getStackInHand(hand).getItem()).toString().startsWith("create:")) {
                 if (player instanceof ServerPlayerEntity serverPlayer) {
                     try {
                         if (!LuckPermsProvider.get().getPlayerAdapter(ServerPlayerEntity.class).getUser(serverPlayer).getCachedData().getPermissionData().checkPermission("metatweaks.create").asBoolean()) {
@@ -334,12 +335,13 @@ public class ArdaStuff implements ModInitializer {
                 try {
                     if (LuckPermsProvider.get().getPlayerAdapter(ServerPlayerEntity.class).getUser(serverPlayer).getCachedData().getPermissionData().checkPermission("metatweaks.protection").asBoolean()) {
                         if (LuckPermsProvider.get().getPlayerAdapter(ServerPlayerEntity.class).getUser(serverPlayer).getPrimaryGroup().equalsIgnoreCase("default")) {
+                            /* TODO
                             if (serverPlayer.getWorld().getRegistryKey() == PocketDimensionPlots.VOID) {
                                 if (PocketDimensionPlotsUtils.getPlotFromCoordinates(serverPlayer.getBlockPos()).playerOwner == serverPlayer.getUuid()) {
                                     return TypedActionResult.pass(player.getMainHandStack());
                                 }
                                 return TypedActionResult.fail(player.getMainHandStack());
-                            }
+                            }*/
                         }
                         return TypedActionResult.pass(player.getMainHandStack());
                     }
@@ -357,9 +359,10 @@ public class ArdaStuff implements ModInitializer {
             //if (Registry.ENTITY_TYPE.getId(entity.getType()).getPath().equalsIgnoreCase("painting") || Registry.ENTITY_TYPE.getId(entity.getType()).getPath().equalsIgnoreCase("item_frame")) {
             if (player instanceof ServerPlayerEntity serverPlayer) {
                 if (LuckPermsProvider.get().getPlayerAdapter(ServerPlayerEntity.class).getUser(serverPlayer).getCachedData().getPermissionData().checkPermission("metatweaks.guestPaintingBreaking").asBoolean()) {
+                  /* TODO
                     if (PocketDimensionPlotsUtils.getPlotFromCoordinates(serverPlayer.getBlockPos()).playerOwner == serverPlayer.getUuid() && serverPlayer.getWorld().getRegistryKey() == PocketDimensionPlots.VOID) {
                         return ActionResult.PASS;
-                    }
+                    }*/
                 }
 
                 if (LuckPermsProvider.get().getPlayerAdapter(ServerPlayerEntity.class).getUser(serverPlayer).getCachedData().getPermissionData().checkPermission("metatweaks.paintingBreaking").asBoolean()) {
@@ -388,8 +391,8 @@ public class ArdaStuff implements ModInitializer {
                 try {
                     if (!LuckPermsProvider.get().getPlayerAdapter(ServerPlayerEntity.class).getUser(player).getCachedData().getPermissionData().checkPermission("metatweaks.hasJoined").asBoolean()) {
                         world.getServer().getPlayerManager().broadcast(Texts.setStyleIfAbsent(Text.literal("Welcome to ArdaCraft, " + player.getDisplayName().getString() + "! Please check out your guide book!"), Style.EMPTY.withColor(TextColor.parse("#416cba"))), false);
-                        ItemStack guideBook = Registry.ITEM.get(new Identifier("patchouli", "guide_book")).getDefaultStack();
-                        ItemStack pathfinder = Registry.ITEM.get(new Identifier("ardapaths", "path_revealer")).getDefaultStack();
+                        ItemStack guideBook = Registries.ITEM.get(new Identifier("patchouli", "guide_book")).getDefaultStack();
+                        ItemStack pathfinder = Registries.ITEM.get(new Identifier("ardapaths", "path_revealer")).getDefaultStack();
 
                         guideBook.getOrCreateNbt().putString("patchouli:book", "patchouli:ac_guide");
                         player.giveItemStack(pathfinder);
@@ -397,7 +400,7 @@ public class ArdaStuff implements ModInitializer {
 
 
                         LuckPermsProvider.get().getUserManager().modifyUser(player.getUuid(), user -> user.data().add(Node.builder("metatweaks.hasJoined").build()));
-                        player.teleport(player.getWorld(), -1468, 25, -826, 0, -10);
+                        player.teleport(player.getServerWorld(), -1468, 25, -826, 0, -10);
                     }
                 } catch (IllegalStateException e) {
                     e.printStackTrace();
@@ -454,7 +457,7 @@ public class ArdaStuff implements ModInitializer {
 
     public boolean isBlockProtectedAgainstUseAction(PlayerEntity player, World world, Hand hand, BlockHitResult hitResult) {
 
-        var blockName = Registry.BLOCK.getId(world.getBlockState(hitResult.getBlockPos()).getBlock()).toString().toLowerCase();
+        var blockName = Registries.BLOCK.getId(world.getBlockState(hitResult.getBlockPos()).getBlock()).toString().toLowerCase();
 
         if (isHandEmpty(player) && (blockName.endsWith("_door") || blockName.endsWith("_gate"))) return false;
         return !hasPermission(player, "metatweaks.protection");

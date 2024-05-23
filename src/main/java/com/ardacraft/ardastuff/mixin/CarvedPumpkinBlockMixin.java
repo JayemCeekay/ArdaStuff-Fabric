@@ -13,18 +13,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(CarvedPumpkinBlock.class)
 public class CarvedPumpkinBlockMixin {
 
-    @Inject(method = "trySpawnEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z", ordinal = 0), cancellable = true)
+    @Inject(method = "trySpawnEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/CarvedPumpkinBlock;spawnEntity(Lnet/minecraft/world/World;Lnet/minecraft/block/pattern/BlockPattern$Result;Lnet/minecraft/entity/Entity;Lnet/minecraft/util/math/BlockPos;)V", ordinal = 0), cancellable = true)
     public void noSpawnSnowGolem(World world, BlockPos pos, CallbackInfo ci) {
         if(!world.isClient) {
-            world.playSound(null, pos, SoundEvents.GOAT_HORN_SOUNDS.get(1), SoundCategory.RECORDS, 1f, 1f);
+            world.playSound(null, pos, SoundEvents.GOAT_HORN_SOUNDS.get(1).value(), SoundCategory.RECORDS, 1f, 1f);
         }
         ci.cancel();
     }
 
-    @Inject(method = "trySpawnEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z", ordinal = 1), cancellable = true)
+    @Inject(method = "trySpawnEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/CarvedPumpkinBlock;spawnEntity(Lnet/minecraft/world/World;Lnet/minecraft/block/pattern/BlockPattern$Result;Lnet/minecraft/entity/Entity;Lnet/minecraft/util/math/BlockPos;)V", ordinal = 1), cancellable = true)
     public void noSpawnIronGolem(World world, BlockPos pos, CallbackInfo ci) {
         if(!world.isClient) {
-            world.playSound(null, pos, SoundEvents.GOAT_HORN_SOUNDS.get(1), SoundCategory.RECORDS, 1f, 1f);
+            world.playSound(null, pos, SoundEvents.GOAT_HORN_SOUNDS.get(1).value(), SoundCategory.RECORDS, 1f, 1f);
         }
         ci.cancel();
     }

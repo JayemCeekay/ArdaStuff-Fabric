@@ -15,6 +15,7 @@ import net.minecraft.entity.passive.HorseEntity;
 import net.minecraft.entity.passive.HorseMarking;
 import net.minecraft.entity.vehicle.BoatEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -26,7 +27,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
-import net.minecraft.util.registry.Registry;
 
 public class ArdaStuffCommandHandler {
 
@@ -39,7 +39,7 @@ public class ArdaStuffCommandHandler {
 
         dispatcher.register(CommandManager.literal("guide").executes(context -> {
             ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
-            ItemStack stack = Registry.ITEM.get(new Identifier("patchouli", "guide_book")).getDefaultStack();
+            ItemStack stack = Registries.ITEM.get(new Identifier("patchouli", "guide_book")).getDefaultStack();
             stack.getOrCreateNbt().putString("patchouli:book", "patchouli:ac_guide");
             player.giveItemStack(stack);
             return 0;
@@ -57,10 +57,10 @@ public class ArdaStuffCommandHandler {
                             ServerCommandSource source = context.getSource();
                             if (ArdaStuff.waterSpreaders.contains(source.getPlayer())) {
                                 ArdaStuff.waterSpreaders.remove(source.getPlayer());
-                                source.sendFeedback(Texts.setStyleIfAbsent(Text.literal("Water spread disabled."), Style.EMPTY.withFormatting(Formatting.RED)), false);
+                                source.sendMessage(Texts.setStyleIfAbsent(Text.literal("Water spread disabled."), Style.EMPTY.withFormatting(Formatting.RED)));
                             } else {
                                 ArdaStuff.waterSpreaders.add(source.getPlayer());
-                                source.sendFeedback(Texts.setStyleIfAbsent(Text.literal("Water spread enabled."), Style.EMPTY.withFormatting(Formatting.GREEN)), false);
+                                source.sendMessage(Texts.setStyleIfAbsent(Text.literal("Water spread enabled."), Style.EMPTY.withFormatting(Formatting.GREEN)));
                             }
                             return 1;
                         })
@@ -182,7 +182,7 @@ public class ArdaStuffCommandHandler {
             var horseColor = Util.getRandom(HorseColor.values(), random);
             var horseMarkings = Util.getRandom(HorseMarking.values(), random);
 
-            horse.setVariant(horseColor, horseMarkings);
+            horse.setVariant(horseColor);
 
             var position = player.getPos();
             horse.teleport(position.x, position.y, position.z);
@@ -235,7 +235,7 @@ public class ArdaStuffCommandHandler {
             player.addStatusEffect(new StatusEffectInstance(StatusEffects.NIGHT_VISION, Integer.MAX_VALUE, 255, false, false));
         else player.removeStatusEffect(StatusEffects.NIGHT_VISION);
 
-        source.sendFeedback(statusEffect == null ? enabled : disabled, false);
+        source.sendMessage(statusEffect == null ? enabled : disabled);
 
         return Command.SINGLE_SUCCESS;
     }
