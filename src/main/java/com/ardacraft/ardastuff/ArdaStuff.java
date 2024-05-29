@@ -4,6 +4,7 @@ import net.coolsimulations.PocketDimensionPlots.PocketDimensionPlots;
 import net.coolsimulations.PocketDimensionPlots.PocketDimensionPlotsUtils;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.player.*;
 import net.fabricmc.loader.impl.util.log.Log;
@@ -96,6 +97,17 @@ public class ArdaStuff implements ModInitializer {
             }
         });
 
+
+        ServerLivingEntityEvents.ALLOW_DAMAGE.register((entity, source, amount) -> {
+            if(entity instanceof ServerPlayerEntity player) {
+                if(LuckPermsProvider.get().getPlayerAdapter(ServerPlayerEntity.class).getUser(player).getCachedData().getPermissionData().checkPermission("metatweaks.candie").asBoolean()) {
+                    return true;
+                }
+                return false;
+            }
+            return true;
+        });
+
         PlayerBlockBreakEvents.BEFORE.register((world, player, pos, state, blockEntity) -> {
             if (player instanceof ServerPlayerEntity serverPlayer) {
                 if (!LuckPermsProvider.get().getPlayerAdapter(ServerPlayerEntity.class).getUser(serverPlayer).getCachedData().getPermissionData().checkPermission("metatweaks.create").asBoolean() && Registry.BLOCK.getId(state.getBlock()).getNamespace().equalsIgnoreCase("create")) {
@@ -175,17 +187,6 @@ public class ArdaStuff implements ModInitializer {
                 }
             }
 
-            if (player instanceof ServerPlayerEntity serverPlayer) {
-                if (LuckPermsProvider.get().getPlayerAdapter(ServerPlayerEntity.class).getUser(serverPlayer).getPrimaryGroup().equalsIgnoreCase("default")) {
-                    if (serverPlayer.getWorld().getRegistryKey() == PocketDimensionPlots.VOID) {
-                        if (PocketDimensionPlotsUtils.getPlotFromCoordinates(serverPlayer.getBlockPos()).playerOwner == serverPlayer.getUuid()) {
-                            return ActionResult.PASS;
-                        }
-                        return ActionResult.FAIL;
-                    }
-                }
-            }
-
             return isBlockProtectedAgainstUseAction(player, world, hand, hitResult) ? ActionResult.FAIL : ActionResult.PASS;
         });
 
@@ -242,16 +243,6 @@ public class ArdaStuff implements ModInitializer {
             if (player instanceof ServerPlayerEntity serverPlayer) {
                 try {
                     if (LuckPermsProvider.get().getPlayerAdapter(ServerPlayerEntity.class).getUser(serverPlayer).getCachedData().getPermissionData().checkPermission("metatweaks.protection").asBoolean()) {
-                        //check if user is default rank (guest)
-                        //check if use is in their plot, if not, fail
-                        if (LuckPermsProvider.get().getPlayerAdapter(ServerPlayerEntity.class).getUser(serverPlayer).getPrimaryGroup().equalsIgnoreCase("default")) {
-                            if (serverPlayer.getWorld().getRegistryKey() == PocketDimensionPlots.VOID) {
-                                if (PocketDimensionPlotsUtils.getPlotFromCoordinates(serverPlayer.getBlockPos()).playerOwner == serverPlayer.getUuid()) {
-                                    return ActionResult.PASS;
-                                }
-                                return ActionResult.FAIL;
-                            }
-                        }
                         return ActionResult.PASS;
                     }
                 } catch (IllegalStateException e) {
@@ -333,14 +324,6 @@ public class ArdaStuff implements ModInitializer {
             if (player instanceof ServerPlayerEntity serverPlayer) {
                 try {
                     if (LuckPermsProvider.get().getPlayerAdapter(ServerPlayerEntity.class).getUser(serverPlayer).getCachedData().getPermissionData().checkPermission("metatweaks.protection").asBoolean()) {
-                        if (LuckPermsProvider.get().getPlayerAdapter(ServerPlayerEntity.class).getUser(serverPlayer).getPrimaryGroup().equalsIgnoreCase("default")) {
-                            if (serverPlayer.getWorld().getRegistryKey() == PocketDimensionPlots.VOID) {
-                                if (PocketDimensionPlotsUtils.getPlotFromCoordinates(serverPlayer.getBlockPos()).playerOwner == serverPlayer.getUuid()) {
-                                    return TypedActionResult.pass(player.getMainHandStack());
-                                }
-                                return TypedActionResult.fail(player.getMainHandStack());
-                            }
-                        }
                         return TypedActionResult.pass(player.getMainHandStack());
                     }
                 } catch (IllegalStateException e) {
