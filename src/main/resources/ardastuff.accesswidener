@@ -1,2 +1,3 @@
 accessWidener v1 named
+accessible field net/minecraft/server/world/ServerWorld worldProperties Lnet/minecraft/world/level/ServerWorldProperties;
 accessible method net/minecraft/entity/passive/HorseEntity setVariant (Lnet/minecraft/entity/passive/HorseColor;Lnet/minecraft/entity/passive/HorseMarking;)V
