@@ -22,7 +22,7 @@
     "LeavesBlockMixin",
     "RespawnAnchorMixin",
     "SaplingGrowthMixin",
-    "ServerPlayerEntity",
+    "ServerPlayerEntityMixin",
     "SpreadableBlockMixin",
     "TNTMinecartMixin",
     "WaterFreezeMixin"

@@ -8,14 +8,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(net.minecraft.server.network.ServerPlayerEntity.class)
-public class ServerPlayerEntity
+public class ServerPlayerEntityMixin
 {
     @Inject(method = "stopRiding()V", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)
     private void stopRidingInject(CallbackInfo ci, Entity entity)
     {
         try
         {
-            if (entity != null && entity.getCustomName() != null && entity.getCustomName().getString().equals("deleteme"))
+            if (entity != null && entity.getCustomName() != null && entity.getCustomName().getString().equals("deleteme") && !entity.hasPassengers())
             {
                 entity.discard();
             }
