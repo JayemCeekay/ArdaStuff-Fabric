@@ -86,67 +86,7 @@ public class ArdaStuffCommandHandler {
                             return 1;
                         })
         );*/
-/*
-        dispatcher.register(CommandManager.literal("askGandalf").requires(serverCommandSource -> {
-            try {
-                return FabricWorldEdit.inst.getPermissionsProvider().hasPermission(serverCommandSource.getPlayerOrThrow(), "metatweaks.askgandalf");
-            } catch (CommandSyntaxException e) {
-                throw new RuntimeException(e);
-            }
-        } ).then(CommandManager.argument("message", StringArgumentType.greedyString()).executes(context -> {
-            ServerPlayerEntity player = context.getSource().getPlayer();
-            String message = StringArgumentType.getString(context, "message");
-            context.getSource().getServer().getPlayerManager().broadcast(Text.of(context.getSource().getName() + ": " + message), false);
-            String response = null;
-            try {
-                response = ChatGPT.sendPromptToChatGPT("gandalf", message, "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");
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-            context.getSource().getServer().getPlayerManager().broadcast(Text.empty().append(Text.literal("[GANDALF] ").formatted(Formatting.GOLD)).append(Text.literal(response)), false);
-            return Command.SINGLE_SUCCESS;
-        })));
 
-        dispatcher.register(CommandManager.literal("askSauron").requires(serverCommandSource -> {
-            try {
-                return FabricWorldEdit.inst.getPermissionsProvider().hasPermission(serverCommandSource.getPlayerOrThrow(), "metatweaks.askgandalf");
-            } catch (CommandSyntaxException e) {
-                throw new RuntimeException(e);
-            }
-        } ).then(CommandManager.argument("message", StringArgumentType.greedyString()).executes(context -> {
-            ServerPlayerEntity player = context.getSource().getPlayer();
-            String message = StringArgumentType.getString(context, "message");
-            context.getSource().getServer().getPlayerManager().broadcast(Text.of(context.getSource().getName() + ": " + message), false);
-            String response = null;
-            try {
-                response = ChatGPT.sendPromptToChatGPT("sauron", message, "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");
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-            context.getSource().getServer().getPlayerManager().broadcast(Text.empty().append(Text.literal("[SAURON] ").formatted(Formatting.DARK_RED)).append(Text.literal(response)), false);
-            return Command.SINGLE_SUCCESS;
-        })));
-
-        dispatcher.register(CommandManager.literal("askGollum").requires(serverCommandSource -> {
-            try {
-                return FabricWorldEdit.inst.getPermissionsProvider().hasPermission(serverCommandSource.getPlayerOrThrow(), "metatweaks.askgandalf");
-            } catch (CommandSyntaxException e) {
-                throw new RuntimeException(e);
-            }
-        } ).then(CommandManager.argument("message", StringArgumentType.greedyString()).executes(context -> {
-            ServerPlayerEntity player = context.getSource().getPlayer();
-            String message = StringArgumentType.getString(context, "message");
-            context.getSource().getServer().getPlayerManager().broadcast(Text.of(context.getSource().getName() + ": " + message), false);
-            String response = null;
-            try {
-                response = ChatGPT.sendPromptToChatGPT("gollum", message, "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");
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-            context.getSource().getServer().getPlayerManager().broadcast(Text.empty().append(Text.literal("[GOLLUM] ").formatted(Formatting.YELLOW)).append(Text.literal(response)), false);
-            return Command.SINGLE_SUCCESS;
-        })));
-*/
         dispatcher.register(CommandManager.literal("sauronsays")
                 .requires(source -> source.hasPermissionLevel(2))
                 .then(CommandManager.argument("message", StringArgumentType.greedyString()).executes(
