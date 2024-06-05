@@ -42,14 +42,36 @@ public class ArdaStuff implements ModInitializer {
     public int ticks = 0;
     public static boolean disableWaterSpread = true;
     public static HashSet<ServerPlayerEntity> waterSpreaders;
-
     public static boolean eventBypass = false;
+
+    public ArrayList<Identifier> allowedCreateBlocks;
 
     @Override
     public void onInitialize() {
         waterSpreaders = new HashSet<>();
         paintingBreakers = new ArrayList<>();
         playerTimeMap = new HashMap<>();
+
+        //initialize create block whitelist
+        allowedCreateBlocks = new ArrayList<>();
+        allowedCreateBlocks.add(new Identifier("create:warped_window_pane"));
+        allowedCreateBlocks.add(new Identifier("create:crimson_window_pane"));
+        allowedCreateBlocks.add(new Identifier("create:brown_valve_handle"));
+        allowedCreateBlocks.add(new Identifier("create:turntable"));
+        allowedCreateBlocks.add(new Identifier("create:black_seat"));
+        allowedCreateBlocks.add(new Identifier("create:white_seat"));
+        allowedCreateBlocks.add(new Identifier("create:rose_quartz_tiles"));
+        allowedCreateBlocks.add(new Identifier("create:brass_block"));
+        allowedCreateBlocks.add(new Identifier("create:small_rose_quartz_tiles"));
+        allowedCreateBlocks.add(new Identifier("create:chute"));
+        allowedCreateBlocks.add(new Identifier("create:framed_glass_trapdoor"));
+        allowedCreateBlocks.add(new Identifier("create:schematic_table"));
+        allowedCreateBlocks.add(new Identifier("create:train_door"));
+        allowedCreateBlocks.add(new Identifier("create:yellow_valve_handle"));
+        allowedCreateBlocks.add(new Identifier("create:red_valve_handle"));
+        allowedCreateBlocks.add(new Identifier("create:gray_valve_handle"));
+        allowedCreateBlocks.add(new Identifier("create:schematicannon"));
+
 
         Stimuli.global().listen(ProjectileHitEvent.ENTITY, (projectileEntity, hitResult) -> {
             if (eventBypass) {
@@ -101,8 +123,8 @@ public class ArdaStuff implements ModInitializer {
 
 
         ServerLivingEntityEvents.ALLOW_DAMAGE.register((entity, source, amount) -> {
-            if(entity instanceof ServerPlayerEntity player) {
-                if(LuckPermsProvider.get().getPlayerAdapter(ServerPlayerEntity.class).getUser(player).getCachedData().getPermissionData().checkPermission("metatweaks.candie").asBoolean()) {
+            if (entity instanceof ServerPlayerEntity player) {
+                if (hasPermission(player, "metatweaks.candie")) {
                     return true;
                 }
                 return false;
@@ -112,8 +134,18 @@ public class ArdaStuff implements ModInitializer {
 
         PlayerBlockBreakEvents.BEFORE.register((world, player, pos, state, blockEntity) -> {
             if (player instanceof ServerPlayerEntity serverPlayer) {
-                if (!LuckPermsProvider.get().getPlayerAdapter(ServerPlayerEntity.class).getUser(serverPlayer).getCachedData().getPermissionData().checkPermission("metatweaks.create").asBoolean() && Registry.BLOCK.getId(state.getBlock()).getNamespace().equalsIgnoreCase("create")) {
-                    return false;
+                if (Registry.BLOCK.getId(state.getBlock()).getNamespace().equalsIgnoreCase("create")) {
+                    if (!hasPermission(serverPlayer, "metatweaks.create")) {
+                        return false;
+                    } else if (!hasPermission(serverPlayer, "metatweaks.createAll")) {
+                        if (!allowedCreateBlocks.contains(Registry.BLOCK.getId(state.getBlock()))) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    } else {
+                        return true;
+                    }
                 }
             }
             return true;
@@ -121,7 +153,7 @@ public class ArdaStuff implements ModInitializer {
 
         PlayerBlockBreakEvents.BEFORE.register((world, player, pos, state, blockEntity) -> {
             if (player instanceof ServerPlayerEntity serverPlayer) {
-                if (!LuckPermsProvider.get().getPlayerAdapter(ServerPlayerEntity.class).getUser(serverPlayer).getCachedData().getPermissionData().checkPermission("metatweaks.protection").asBoolean()) {
+                if (!hasPermission(serverPlayer, "metatweaks.protection")) {
                     return false;
                 }
             }
@@ -130,48 +162,48 @@ public class ArdaStuff implements ModInitializer {
 
         UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
             if (player.getMainHandStack().getItem() instanceof SpawnEggItem) {
-                Log.info(LogCategory.LOG, "Spawn egg used " + Registry.ITEM.getId(player.getStackInHand(hand).getItem()));
+                Log.info(LogCategory.LOG, "Spawn egg used " + Registry.ITEM.getId(player.getStackInHand(hand).getItem()) + " by " + player.getName().getString());
                 return ActionResult.FAIL;
             }
 
             if (!hasPermission(player, "metatweaks.protection")) {
                 if (player.getMainHandStack().getItem() instanceof MinecartItem) {
-                    Log.info(LogCategory.LOG, "Minecart used " + Registry.ITEM.getId(player.getStackInHand(hand).getItem()));
+                    Log.info(LogCategory.LOG, "Minecart used " + Registry.ITEM.getId(player.getStackInHand(hand).getItem()) + " by " + player.getName().getString());
                     return ActionResult.FAIL;
                 }
 
                 if (player.getMainHandStack().getItem() instanceof BucketItem) {
-                    Log.info(LogCategory.LOG, "Bucket used " + Registry.ITEM.getId(player.getStackInHand(hand).getItem()));
+                    Log.info(LogCategory.LOG, "Bucket used " + Registry.ITEM.getId(player.getStackInHand(hand).getItem()) + " by " + player.getName().getString());
                     return ActionResult.FAIL;
                 }
 
                 if (player.getMainHandStack().getItem() instanceof FlintAndSteelItem) {
-                    Log.info(LogCategory.LOG, "Flint and Steel used " + Registry.ITEM.getId(player.getStackInHand(hand).getItem()));
+                    Log.info(LogCategory.LOG, "Flint and Steel used " + Registry.ITEM.getId(player.getStackInHand(hand).getItem()) + " by " + player.getName().getString());
                     return ActionResult.FAIL;
                 }
 
                 if (player.getMainHandStack().getItem() instanceof TridentItem) {
-                    Log.info(LogCategory.LOG, "Trident used " + Registry.ITEM.getId(player.getStackInHand(hand).getItem()));
+                    Log.info(LogCategory.LOG, "Trident used " + Registry.ITEM.getId(player.getStackInHand(hand).getItem()) + " by " + player.getName().getString());
                     return ActionResult.FAIL;
                 }
 
                 if (player.getMainHandStack().getItem() instanceof BoatItem) {
-                    Log.info(LogCategory.LOG, "Boat used " + Registry.ITEM.getId(player.getStackInHand(hand).getItem()));
+                    Log.info(LogCategory.LOG, "Boat used " + Registry.ITEM.getId(player.getStackInHand(hand).getItem()) + " by " + player.getName().getString());
                     return ActionResult.FAIL;
                 }
 
                 if (player.getMainHandStack().getItem() instanceof EggItem) {
-                    Log.info(LogCategory.LOG, "Egg used " + Registry.ITEM.getId(player.getStackInHand(hand).getItem()));
+                    Log.info(LogCategory.LOG, "Egg used " + Registry.ITEM.getId(player.getStackInHand(hand).getItem()) + " by " + player.getName().getString());
                     return ActionResult.FAIL;
                 }
 
                 if (player.getMainHandStack().getItem() instanceof MilkBucketItem) {
-                    Log.info(LogCategory.LOG, "Milk Bucket used " + Registry.ITEM.getId(player.getStackInHand(hand).getItem()));
+                    Log.info(LogCategory.LOG, "Milk Bucket used " + Registry.ITEM.getId(player.getStackInHand(hand).getItem()) + " by " + player.getName().getString());
                     return ActionResult.FAIL;
                 }
 
                 if (player.getMainHandStack().getItem() instanceof ThrowablePotionItem) {
-                    Log.info(LogCategory.LOG, "Throwable Potion used " + Registry.ITEM.getId(player.getStackInHand(hand).getItem()));
+                    Log.info(LogCategory.LOG, "Throwable Potion used " + Registry.ITEM.getId(player.getStackInHand(hand).getItem()) + " by " + player.getName().getString());
                     return ActionResult.FAIL;
                 }
 
@@ -180,8 +212,18 @@ public class ArdaStuff implements ModInitializer {
             if (Registry.ITEM.getId(player.getStackInHand(hand).getItem()).toString().startsWith("create:")) {
                 if (player instanceof ServerPlayerEntity serverPlayer) {
                     try {
-                        if (!LuckPermsProvider.get().getPlayerAdapter(ServerPlayerEntity.class).getUser(serverPlayer).getCachedData().getPermissionData().checkPermission("metatweaks.create").asBoolean()) {
-                            return ActionResult.FAIL;
+                        if (hasPermission(serverPlayer, "metatweaks.protection")) {
+                            if (!hasPermission(serverPlayer, "metatweaks.create")) {
+                                return ActionResult.FAIL;
+                            } else if (!hasPermission(serverPlayer, "metatweaks.createAll")) {
+                                if (!allowedCreateBlocks.contains(Registry.ITEM.getId(serverPlayer.getStackInHand(hand).getItem()))) {
+                                    return ActionResult.FAIL;
+                                } else {
+                                    return ActionResult.PASS;
+                                }
+                            } else {
+                                return ActionResult.PASS;
+                            }
                         }
                     } catch (IllegalStateException e) {
                         e.printStackTrace();
@@ -242,9 +284,31 @@ public class ArdaStuff implements ModInitializer {
 
             }
 
+            if (Registry.ITEM.getId(player.getStackInHand(hand).getItem()).toString().startsWith("create:")) {
+                if (player instanceof ServerPlayerEntity serverPlayer) {
+                    try {
+                        if (hasPermission(serverPlayer, "metatweaks.protection")) {
+                            if (!hasPermission(serverPlayer, "metatweaks.create")) {
+                                return ActionResult.FAIL;
+                            } else if (!hasPermission(serverPlayer, "metatweaks.createAll")) {
+                                if (!allowedCreateBlocks.contains(Registry.ITEM.getId(serverPlayer.getStackInHand(hand).getItem()))) {
+                                    return ActionResult.FAIL;
+                                } else {
+                                    return ActionResult.PASS;
+                                }
+                            } else {
+                                return ActionResult.PASS;
+                            }
+                        }
+                    } catch (IllegalStateException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
             if (player instanceof ServerPlayerEntity serverPlayer) {
                 try {
-                    if (LuckPermsProvider.get().getPlayerAdapter(ServerPlayerEntity.class).getUser(serverPlayer).getCachedData().getPermissionData().checkPermission("metatweaks.protection").asBoolean()) {
+                    if (hasPermission(serverPlayer, "metatweaks.protection")) {
                         return ActionResult.PASS;
                     }
                 } catch (IllegalStateException e) {
@@ -314,8 +378,18 @@ public class ArdaStuff implements ModInitializer {
             if (Registry.ITEM.getId(player.getStackInHand(hand).getItem()).toString().startsWith("create:")) {
                 if (player instanceof ServerPlayerEntity serverPlayer) {
                     try {
-                        if (!LuckPermsProvider.get().getPlayerAdapter(ServerPlayerEntity.class).getUser(serverPlayer).getCachedData().getPermissionData().checkPermission("metatweaks.create").asBoolean()) {
-                            return TypedActionResult.fail(ItemStack.EMPTY);
+                        if (hasPermission(serverPlayer, "metatweaks.protection")) {
+                            if (!hasPermission(serverPlayer, "metatweaks.create")) {
+                                return TypedActionResult.fail(ItemStack.EMPTY);
+                            } else if (!hasPermission(serverPlayer, "metatweaks.createAll")) {
+                                if (!allowedCreateBlocks.contains(Registry.ITEM.getId(serverPlayer.getStackInHand(hand).getItem()))) {
+                                    return TypedActionResult.fail(ItemStack.EMPTY);
+                                } else {
+                                    return TypedActionResult.pass(serverPlayer.getStackInHand(hand));
+                                }
+                            } else {
+                                return TypedActionResult.pass(serverPlayer.getStackInHand(hand));
+                            }
                         }
                     } catch (IllegalStateException e) {
                         e.printStackTrace();
@@ -325,7 +399,7 @@ public class ArdaStuff implements ModInitializer {
 
             if (player instanceof ServerPlayerEntity serverPlayer) {
                 try {
-                    if (LuckPermsProvider.get().getPlayerAdapter(ServerPlayerEntity.class).getUser(serverPlayer).getCachedData().getPermissionData().checkPermission("metatweaks.protection").asBoolean()) {
+                    if (hasPermission(serverPlayer, "metatweaks.protection")) {
                         return TypedActionResult.pass(player.getMainHandStack());
                     }
                 } catch (IllegalStateException e) {
@@ -341,13 +415,13 @@ public class ArdaStuff implements ModInitializer {
         AttackEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
             //if (Registry.ENTITY_TYPE.getId(entity.getType()).getPath().equalsIgnoreCase("painting") || Registry.ENTITY_TYPE.getId(entity.getType()).getPath().equalsIgnoreCase("item_frame")) {
             if (player instanceof ServerPlayerEntity serverPlayer) {
-                if (LuckPermsProvider.get().getPlayerAdapter(ServerPlayerEntity.class).getUser(serverPlayer).getCachedData().getPermissionData().checkPermission("metatweaks.guestPaintingBreaking").asBoolean()) {
+                if (hasPermission(serverPlayer, "metatweaks.guestPaintingBreaking")) {
                     if (PocketDimensionPlotsUtils.getPlotFromCoordinates(serverPlayer.getBlockPos()).playerOwner == serverPlayer.getUuid() && serverPlayer.getWorld().getRegistryKey() == PocketDimensionPlots.VOID) {
                         return ActionResult.PASS;
                     }
                 }
 
-                if (LuckPermsProvider.get().getPlayerAdapter(ServerPlayerEntity.class).getUser(serverPlayer).getCachedData().getPermissionData().checkPermission("metatweaks.paintingBreaking").asBoolean()) {
+                if (hasPermission(serverPlayer, "metatweaks.paintingBreaking")) {
                     return ActionResult.PASS;
                 }
                 //    }
@@ -358,7 +432,7 @@ public class ArdaStuff implements ModInitializer {
         AttackEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
             if (player instanceof ServerPlayerEntity serverPlayer) {
                 try {
-                    if (!LuckPermsProvider.get().getPlayerAdapter(ServerPlayerEntity.class).getUser(serverPlayer).getCachedData().getPermissionData().checkPermission("metatweaks.protection").asBoolean()) {
+                    if (!hasPermission(serverPlayer, "metatweaks.protection")) {
                         return ActionResult.FAIL;
                     }
                 } catch (IllegalStateException e) {
@@ -371,7 +445,7 @@ public class ArdaStuff implements ModInitializer {
         ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> {
             if (entity instanceof ServerPlayerEntity player) {
                 try {
-                    if (!LuckPermsProvider.get().getPlayerAdapter(ServerPlayerEntity.class).getUser(player).getCachedData().getPermissionData().checkPermission("metatweaks.hasJoined").asBoolean()) {
+                    if (!hasPermission(player, "metatweaks.hasJoined")) {
                         world.getServer().getPlayerManager().broadcast(Texts.setStyleIfAbsent(Text.literal("Welcome to ArdaCraft, " + player.getDisplayName().getString() + "! Please check out your guide book!"), Style.EMPTY.withColor(TextColor.parse("#416cba"))), false);
                         ItemStack guideBook = Registry.ITEM.get(new Identifier("patchouli", "guide_book")).getDefaultStack();
                         ItemStack pathfinder = Registry.ITEM.get(new Identifier("ardapaths", "path_revealer")).getDefaultStack();
@@ -383,14 +457,14 @@ public class ArdaStuff implements ModInitializer {
 
                         LuckPermsProvider.get().getUserManager().modifyUser(player.getUuid(), user -> user.data().add(Node.builder("metatweaks.hasJoined").build()));
                         ServerWorld freebuild = null;
-                        for(ServerWorld world1 : player.getServer().getWorlds()) {
-                            if(world1.worldProperties.getLevelName().equalsIgnoreCase("freebuild")) {
+                        for (ServerWorld world1 : player.getServer().getWorlds()) {
+                            if (world1.worldProperties.getLevelName().equalsIgnoreCase("freebuild")) {
                                 freebuild = world1;
                             }
                         }
-                        if(freebuild == null) {
-                            for(RegistryKey<World> key : player.getServer().getWorldRegistryKeys()) {
-                                if(key.getValue().getPath().equalsIgnoreCase("freebuild")) {
+                        if (freebuild == null) {
+                            for (RegistryKey<World> key : player.getServer().getWorldRegistryKeys()) {
+                                if (key.getValue().getPath().equalsIgnoreCase("freebuild")) {
                                     freebuild = player.getServer().getWorld(key);
                                 }
                             }
@@ -457,5 +531,4 @@ public class ArdaStuff implements ModInitializer {
         if (isHandEmpty(player) && (blockName.endsWith("_door") || blockName.endsWith("_gate"))) return false;
         return !hasPermission(player, "metatweaks.protection");
     }
-
 }
