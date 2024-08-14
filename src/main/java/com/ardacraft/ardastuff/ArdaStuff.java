@@ -1,5 +1,7 @@
 package com.ardacraft.ardastuff;
 
+import com.ardacraft.ardastuff.mixin.AbstractBlockMixin;
+import io.github.fabricators_of_create.porting_lib.block.NeighborChangeListeningBlock;
 import net.coolsimulations.PocketDimensionPlots.PocketDimensionPlots;
 import net.coolsimulations.PocketDimensionPlots.PocketDimensionPlotsUtils;
 import net.fabricmc.api.ModInitializer;
@@ -11,9 +13,14 @@ import net.fabricmc.loader.impl.util.log.Log;
 import net.fabricmc.loader.impl.util.log.LogCategory;
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.node.Node;
+import net.minecraft.client.render.entity.LeashKnotEntityRenderer;
+import net.minecraft.client.render.entity.model.LeashKnotEntityModel;
+import net.minecraft.entity.decoration.LeashKnotEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
+import net.minecraft.particle.ParticleEffect;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.BlockEvent;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -27,7 +34,9 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
+import net.minecraft.world.block.NeighborUpdater;
 import xyz.nucleoid.stimuli.Stimuli;
+import xyz.nucleoid.stimuli.event.block.BlockBreakEvent;
 import xyz.nucleoid.stimuli.event.projectile.ProjectileHitEvent;
 import xyz.nucleoid.stimuli.event.world.*;
 
@@ -89,6 +98,8 @@ public class ArdaStuff implements ModInitializer {
             }
             return ActionResult.FAIL;
         });
+
+        
 
         Stimuli.global().listen(FireTickEvent.EVENT, (world, pos) -> {
             return ActionResult.FAIL;
@@ -487,7 +498,7 @@ public class ArdaStuff implements ModInitializer {
                         case "landscaper" -> "Landscaper";
                         case "builderplus" -> "Builder+";
                         case "builder" -> "Builder";
-                        case "community_manager" -> "Community_Manager";
+                        case "event_manager" -> "Community_Manager";
                         case "apprentice" -> "Apprentice";
                         case "media_manager" -> "Media_Manager";
                         case "patron" -> "Patron";
