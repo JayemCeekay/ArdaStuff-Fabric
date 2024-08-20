@@ -19,6 +19,7 @@
     "FrogSpawnMixin",
     "GrassSpreadMixin",
     "HeightMapMixin",
+    "ItemFrameEntityMixin",
     "LeavesBlockMixin",
     "RespawnAnchorMixin",
     "SaplingGrowthMixin",

@@ -15,7 +15,7 @@ public class ServerPlayerEntity
     {
         try
         {
-            if (entity != null && entity.getCustomName() != null && entity.getCustomName().getString().equals("deleteme"))
+            if (entity != null && entity.getCustomName() != null && entity.getCustomName().getString().equals("deleteme") && !entity.hasPassengers())
             {
                 entity.discard();
             }

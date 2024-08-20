@@ -2,6 +2,7 @@ package com.ardacraft.ardastuff;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.player.*;
 import net.fabricmc.loader.impl.util.log.Log;
@@ -37,7 +38,7 @@ public class ArdaStuff implements ModInitializer {
     public int ticks = 0;
     public static boolean disableWaterSpread = true;
     public static HashSet<ServerPlayerEntity> waterSpreaders;
-
+    public ArrayList<Identifier> allowedCreateBlocks;
     public static boolean eventBypass = false;
 
     @Override
@@ -45,6 +46,28 @@ public class ArdaStuff implements ModInitializer {
         waterSpreaders = new HashSet<>();
         paintingBreakers = new ArrayList<>();
         playerTimeMap = new HashMap<>();
+
+        //initialize create block whitelist
+        allowedCreateBlocks = new ArrayList<>();
+        allowedCreateBlocks.add(new Identifier("create:warped_window_pane"));
+        allowedCreateBlocks.add(new Identifier("create:crimson_window_pane"));
+        allowedCreateBlocks.add(new Identifier("create:brown_valve_handle"));
+        allowedCreateBlocks.add(new Identifier("create:turntable"));
+        allowedCreateBlocks.add(new Identifier("create:black_seat"));
+        allowedCreateBlocks.add(new Identifier("create:white_seat"));
+        allowedCreateBlocks.add(new Identifier("create:rose_quartz_tiles"));
+        allowedCreateBlocks.add(new Identifier("create:brass_block"));
+        allowedCreateBlocks.add(new Identifier("create:small_rose_quartz_tiles"));
+        allowedCreateBlocks.add(new Identifier("create:chute"));
+        allowedCreateBlocks.add(new Identifier("create:framed_glass_trapdoor"));
+        allowedCreateBlocks.add(new Identifier("create:schematic_table"));
+        allowedCreateBlocks.add(new Identifier("create:train_door"));
+        allowedCreateBlocks.add(new Identifier("create:yellow_valve_handle"));
+        allowedCreateBlocks.add(new Identifier("create:red_valve_handle"));
+        allowedCreateBlocks.add(new Identifier("create:gray_valve_handle"));
+        allowedCreateBlocks.add(new Identifier("create:schematicannon"));
+
+
 
         Stimuli.global().listen(ProjectileHitEvent.ENTITY, (projectileEntity, hitResult) -> {
             if (eventBypass) {
@@ -92,6 +115,17 @@ public class ArdaStuff implements ModInitializer {
             if (environment.dedicated) {
                 ArdaStuffCommandHandler.ArdaStuffCommands(dispatcher, registryAccess, environment);
             }
+        });
+
+
+        ServerLivingEntityEvents.ALLOW_DAMAGE.register((entity, source, amount) -> {
+            if(entity instanceof ServerPlayerEntity player) {
+                if(LuckPermsProvider.get().getPlayerAdapter(ServerPlayerEntity.class).getUser(player).getCachedData().getPermissionData().checkPermission("metatweaks.candie").asBoolean()) {
+                    return true;
+                }
+                return false;
+            }
+            return true;
         });
 
         PlayerBlockBreakEvents.BEFORE.register((world, player, pos, state, blockEntity) -> {
@@ -400,7 +434,8 @@ public class ArdaStuff implements ModInitializer {
 
 
                         LuckPermsProvider.get().getUserManager().modifyUser(player.getUuid(), user -> user.data().add(Node.builder("metatweaks.hasJoined").build()));
-                        player.teleport(player.getServerWorld(), -1468, 25, -826, 0, -10);
+                        //player.teleport(player.getServerWorld(), -1468, 25, -826, 0, -10);
+                        player.getServer().getCommandManager().executeWithPrefix(player.getCommandSource(), "/warp spawn");
                     }
                 } catch (IllegalStateException e) {
                     e.printStackTrace();
