@@ -3,22 +3,17 @@ package com.ardacraft.ardastuff;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
-import net.fabricmc.fabric.api.event.player.*;
+import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
+import net.fabricmc.fabric.api.event.player.UseEntityCallback;
+import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.fabricmc.loader.impl.util.log.Log;
 import net.fabricmc.loader.impl.util.log.LogCategory;
 import net.luckperms.api.LuckPermsProvider;
-import net.luckperms.api.node.Node;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.registry.Registries;
-import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.text.TextColor;
-import net.minecraft.text.Texts;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
@@ -30,14 +25,11 @@ import xyz.nucleoid.stimuli.event.projectile.ProjectileHitEvent;
 import xyz.nucleoid.stimuli.event.world.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 
 public class ArdaStuff implements ModInitializer {
 
     public static ArrayList<ServerPlayerEntity> paintingBreakers;
-    public static HashMap<ServerPlayerEntity, Long> playerTimeMap;
-    public int ticks = 0;
     public static boolean disableWaterSpread = true;
     public static HashSet<ServerPlayerEntity> waterSpreaders;
     public static boolean eventBypass = false;
@@ -48,7 +40,6 @@ public class ArdaStuff implements ModInitializer {
     public void onInitialize() {
         waterSpreaders = new HashSet<>();
         paintingBreakers = new ArrayList<>();
-        playerTimeMap = new HashMap<>();
 
         //initialize create block whitelist
         allowedCreateBlocks = new ArrayList<>();
@@ -120,7 +111,6 @@ public class ArdaStuff implements ModInitializer {
                 ArdaStuffCommandHandler.ArdaStuffCommands(dispatcher, registryAccess, environment);
             }
         });
-
 
         ServerLivingEntityEvents.ALLOW_DAMAGE.register((entity, source, amount) -> {
             if (entity instanceof ServerPlayerEntity player) {
@@ -371,7 +361,7 @@ public class ArdaStuff implements ModInitializer {
                     return TypedActionResult.fail(ItemStack.EMPTY);
                 }
 
-                return TypedActionResult.fail(ItemStack.EMPTY);
+                return TypedActionResult.pass(ItemStack.EMPTY);
 
             }
 
@@ -397,7 +387,7 @@ public class ArdaStuff implements ModInitializer {
                 }
             }
 
-            return TypedActionResult.fail(ItemStack.EMPTY);
+            return TypedActionResult.pass(ItemStack.EMPTY);
         });
 
     }
