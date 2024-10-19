@@ -44,9 +44,7 @@ public class ArdaStuff implements ModInitializer {
     @Override
     public void onInitialize() {
         waterSpreaders = new HashSet<>();
-        paintingBreakers = new ArrayList<>();
-        playerTimeMap = new HashMap<>();
-
+        
         //initialize create block whitelist
         allowedCreateBlocks = new ArrayList<>();
         allowedCreateBlocks.add(new Identifier("create:warped_window_pane"));
@@ -81,7 +79,7 @@ public class ArdaStuff implements ModInitializer {
                     return ActionResult.FAIL;
                 }
 
-                return ActionResult.SUCCESS;
+                return ActionResult.PASS;
             }
             return ActionResult.FAIL;
         });
@@ -297,8 +295,11 @@ public class ArdaStuff implements ModInitializer {
         });
 
         UseItemCallback.EVENT.register((player, world, hand) -> {
-
             if (Registries.ITEM.getId(player.getStackInHand(hand).getItem()).toString().startsWith("patchouli:guide_book")) {
+                return TypedActionResult.pass(player.getStackInHand(hand));
+            }
+
+            if (Registries.ITEM.getId(player.getStackInHand(hand).getItem()).toString().startsWith("ardapaths:path_revealer")) {
                 return TypedActionResult.pass(player.getStackInHand(hand));
             }
 
