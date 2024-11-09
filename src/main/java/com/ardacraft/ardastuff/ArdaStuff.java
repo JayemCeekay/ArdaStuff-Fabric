@@ -28,23 +28,22 @@ import xyz.nucleoid.stimuli.event.projectile.ProjectileHitEvent;
 import xyz.nucleoid.stimuli.event.world.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 
 public class ArdaStuff implements ModInitializer {
 
-    public static ArrayList<ServerPlayerEntity> paintingBreakers;
-    public static HashMap<ServerPlayerEntity, Long> playerTimeMap;
-    public int ticks = 0;
+
     public static boolean disableWaterSpread = true;
     public static HashSet<ServerPlayerEntity> waterSpreaders;
-    public ArrayList<Identifier> allowedCreateBlocks;
+    //public ArrayList<Identifier> allowedCreateBlocks;
     public static boolean eventBypass = false;
 
     @Override
     public void onInitialize() {
         waterSpreaders = new HashSet<>();
-        
+
+
+        /*
         //initialize create block whitelist
         allowedCreateBlocks = new ArrayList<>();
         allowedCreateBlocks.add(new Identifier("create:warped_window_pane"));
@@ -64,7 +63,7 @@ public class ArdaStuff implements ModInitializer {
         allowedCreateBlocks.add(new Identifier("create:red_valve_handle"));
         allowedCreateBlocks.add(new Identifier("create:gray_valve_handle"));
         allowedCreateBlocks.add(new Identifier("create:schematicannon"));
-
+*/
 
 
         Stimuli.global().listen(ProjectileHitEvent.ENTITY, (projectileEntity, hitResult) -> {
@@ -295,13 +294,13 @@ public class ArdaStuff implements ModInitializer {
         });
 
         UseItemCallback.EVENT.register((player, world, hand) -> {
-            if (Registries.ITEM.getId(player.getStackInHand(hand).getItem()).toString().startsWith("patchouli:guide_book")) {
+            /*if (Registries.ITEM.getId(player.getStackInHand(hand).getItem()).toString().startsWith("patchouli:guide_book")) {
                 return TypedActionResult.pass(player.getStackInHand(hand));
-            }
+            }*/
 
-            if (Registries.ITEM.getId(player.getStackInHand(hand).getItem()).toString().startsWith("ardapaths:path_revealer")) {
+            /*if (Registries.ITEM.getId(player.getStackInHand(hand).getItem()).toString().startsWith("ardapaths:path_revealer")) {
                 return TypedActionResult.pass(player.getStackInHand(hand));
-            }
+            }*/
 
             if (player.getMainHandStack().getItem() instanceof net.minecraft.item.SpawnEggItem) {
                 Log.info(LogCategory.LOG, "Spawn egg used " + Registries.ITEM.getId(player.getStackInHand(hand).getItem()));
@@ -421,9 +420,9 @@ public class ArdaStuff implements ModInitializer {
             return ActionResult.PASS;
         });
 
-        ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> {
+        /*ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> {
             if (entity instanceof ServerPlayerEntity player) {
-                try {
+               /* try {
                     if (!LuckPermsProvider.get().getPlayerAdapter(ServerPlayerEntity.class).getUser(player).getCachedData().getPermissionData().checkPermission("metatweaks.hasJoined").asBoolean()) {
                         world.getServer().getPlayerManager().broadcast(Texts.setStyleIfAbsent(Text.literal("Welcome to ArdaCraft, " + player.getDisplayName().getString() + "! Please check out your guide book!"), Style.EMPTY.withColor(TextColor.parse("#416cba"))), false);
                         ItemStack guideBook = Registries.ITEM.get(new Identifier("patchouli", "guide_book")).getDefaultStack();
@@ -468,9 +467,9 @@ public class ArdaStuff implements ModInitializer {
                     }
                 } catch (IllegalStateException e) {
                     e.printStackTrace();
-                }
+                }*
             }
-        });
+        });*/
     }
 
     public boolean isHandEmpty(PlayerEntity player) {

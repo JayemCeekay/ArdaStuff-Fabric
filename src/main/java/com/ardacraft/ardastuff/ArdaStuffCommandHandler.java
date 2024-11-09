@@ -37,6 +37,7 @@ public class ArdaStuffCommandHandler {
         FabricWorldEdit.inst.getPermissionsProvider().registerPermission("metatweaks.cpaintingbreaking");
         FabricWorldEdit.inst.getPermissionsProvider().registerPermission("metatweaks.askgandalf");
 
+        /*
         dispatcher.register(CommandManager.literal("guide").executes(context -> {
             ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
             ItemStack stack = Registries.ITEM.get(new Identifier("patchouli", "guide_book")).getDefaultStack();
@@ -44,7 +45,7 @@ public class ArdaStuffCommandHandler {
             player.giveItemStack(stack);
             return 0;
         }));
-
+*/
         //register cwaterspread
         dispatcher.register(CommandManager.literal("cwaterspread").requires(serverCommandSource -> {
                             try {
@@ -147,6 +148,7 @@ public class ArdaStuffCommandHandler {
             return Command.SINGLE_SUCCESS;
         })));
 */
+        /*
         dispatcher.register(CommandManager.literal("sauronsays")
                 .requires(source -> source.hasPermissionLevel(2))
                 .then(CommandManager.argument("message", StringArgumentType.greedyString()).executes(
@@ -160,7 +162,7 @@ public class ArdaStuffCommandHandler {
                             return Command.SINGLE_SUCCESS;
                         }
                 )));
-
+*/
         //register nightvision
         dispatcher.register(CommandManager.literal("nightvision").executes(context -> ArdaStuffCommandHandler.processNightvision(context.getSource())));
         dispatcher.register(CommandManager.literal("nv").executes(context -> ArdaStuffCommandHandler.processNightvision(context.getSource())));
