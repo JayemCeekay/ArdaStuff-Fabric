@@ -25,6 +25,7 @@
     "SaplingGrowthMixin",
     "ServerPlayerEntity",
     "SpreadableBlockMixin",
+    "TeleportCommandMixin",
     "TNTMinecartMixin",
     "WaterFreezeMixin"
   ],

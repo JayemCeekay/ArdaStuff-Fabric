@@ -4,6 +4,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.*;
 import net.fabricmc.loader.impl.util.log.Log;
 import net.fabricmc.loader.impl.util.log.LogCategory;
@@ -44,7 +45,7 @@ public class ArdaStuff implements ModInitializer {
     @Override
     public void onInitialize() {
         waterSpreaders = new HashSet<>();
-        
+
         //initialize create block whitelist
         allowedCreateBlocks = new ArrayList<>();
         allowedCreateBlocks.add(new Identifier("create:warped_window_pane"));
@@ -82,6 +83,14 @@ public class ArdaStuff implements ModInitializer {
                 return ActionResult.PASS;
             }
             return ActionResult.FAIL;
+        });
+
+        ServerTickEvents.END_SERVER_TICK.register(server -> {
+            for(ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+                if(player.getBlockPos().getY() < -64) {
+                    server.getCommandManager().executeWithPrefix(player.getCommandSource(), "/warp spawn");
+                }
+            }
         });
 
         Stimuli.global().listen(FireTickEvent.EVENT, (world, pos) -> {
@@ -424,24 +433,24 @@ public class ArdaStuff implements ModInitializer {
         ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> {
             if (entity instanceof ServerPlayerEntity player) {
                 try {
-                    if (!LuckPermsProvider.get().getPlayerAdapter(ServerPlayerEntity.class).getUser(player).getCachedData().getPermissionData().checkPermission("metatweaks.hasJoined").asBoolean()) {
-                        world.getServer().getPlayerManager().broadcast(Texts.setStyleIfAbsent(Text.literal("Welcome to ArdaCraft, " + player.getDisplayName().getString() + "! Please check out your guide book!"), Style.EMPTY.withColor(TextColor.parse("#416cba"))), false);
-                        ItemStack guideBook = Registries.ITEM.get(new Identifier("patchouli", "guide_book")).getDefaultStack();
-                        ItemStack pathfinder = Registries.ITEM.get(new Identifier("ardapaths", "path_revealer")).getDefaultStack();
+                   // if (!LuckPermsProvider.get().getPlayerAdapter(ServerPlayerEntity.class).getUser(player).getCachedData().getPermissionData().checkPermission("metatweaks.hasJoined").asBoolean()) {
+                      // world.getServer().getPlayerManager().broadcast(Texts.setStyleIfAbsent(Text.literal("Welcome to ArdaCraft, " + player.getDisplayName().getString() + "! Please check out your guide book!"), Style.EMPTY.withColor(TextColor.parse("#416cba"))), false);
+                        //ItemStack guideBook = Registries.ITEM.get(new Identifier("patchouli", "guide_book")).getDefaultStack();
+                       // ItemStack pathfinder = Registries.ITEM.get(new Identifier("ardapaths", "path_revealer")).getDefaultStack();
 
-                        guideBook.getOrCreateNbt().putString("patchouli:book", "patchouli:ac_guide");
-                        player.giveItemStack(pathfinder);
-                        player.giveItemStack(guideBook);
+                        //guideBook.getOrCreateNbt().putString("patchouli:book", "patchouli:ac_guide");
+                       //player.giveItemStack(pathfinder);
+                       //player.giveItemStack(guideBook);
 
 
-                        LuckPermsProvider.get().getUserManager().modifyUser(player.getUuid(), user -> user.data().add(Node.builder("metatweaks.hasJoined").build()));
+                        //LuckPermsProvider.get().getUserManager().modifyUser(player.getUuid(), user -> user.data().add(Node.builder("metatweaks.hasJoined").build()));
                         //player.teleport(player.getServerWorld(), -1468, 25, -826, 0, -10);
-                        player.getServer().getCommandManager().executeWithPrefix(player.getCommandSource(), "/warp spawn");
-                    }
+                        //player.getServer().getCommandManager().executeWithPrefix(player.getCommandSource(), "/warp spawn");
+                  //  }
                 } catch (IllegalStateException e) {
                     e.printStackTrace();
                 }
-
+/*
                 try {
                     String group = LuckPermsProvider.get().getPlayerAdapter(ServerPlayerEntity.class).getUser(player).getPrimaryGroup().toLowerCase();
 
@@ -468,7 +477,7 @@ public class ArdaStuff implements ModInitializer {
                     }
                 } catch (IllegalStateException e) {
                     e.printStackTrace();
-                }
+                }*/
             }
         });
     }
